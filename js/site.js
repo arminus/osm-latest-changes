@@ -33,11 +33,12 @@ updateMap();
 
 function run() {
     var bounds = map.getBounds();
-    d3.xml('http://www.openstreetmap.org/api/0.6/map?bbox=' +
-        bounds.getSouthWest().lng + ',' +
-        bounds.getSouthWest().lat + ',' +
-        bounds.getNorthEast().lng + ',' +
-        bounds.getNorthEast().lat // + ',' +
+    var bbox = bounds.getSouthWest().lat + ',' +
+               bounds.getSouthWest().lng + ',' +
+               bounds.getNorthEast().lat + ',' +
+               bounds.getNorthEast().lng;
+    var last_week = (new Date(new Date()-1000*60*60*24*7)).toISOString();
+    d3.xml('http://overpass-api.de/api/interpreter?data=(node(' + bbox + ')(newer:"' + last_week + '");way(bn);node(w);way(' + bbox + ')(newer:"' + last_week + '");node(w););out meta;'
         ).on('load', function(xml) {
             d3.select('#map').classed('faded', false);
             layer && map.removeLayer(layer);
