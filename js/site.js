@@ -38,7 +38,8 @@ function run() {
                bounds.getNorthEast().lat + ',' +
                bounds.getNorthEast().lng;
     var last_week = (new Date(new Date()-1000*60*60*24*7)).toISOString();
-    d3.xml('http://overpass-api.de/api/interpreter?data=node(' + bbox + ')(newer:"' + last_week + '");out meta;(way(bn);node(w););out skel;way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;'
+    var overpass_query = 'way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
+    d3.xml('http://overpass-api.de/api/interpreter?data='+overpass_query
         ).on('load', function(xml) {
             d3.select('#map').classed('faded', false);
             layer && map.removeLayer(layer);
