@@ -38,7 +38,7 @@ function run() {
                bounds.getNorthEast().lat + ',' +
                bounds.getNorthEast().lng;
     var last_week = (new Date(new Date()-1000*60*60*24*7)).toISOString();
-    d3.xml('http://overpass-api.de/api/interpreter?data=(node(' + bbox + ')(newer:"' + last_week + '");way(bn);node(w);way(' + bbox + ')(newer:"' + last_week + '");node(w););out meta;'
+    d3.xml('http://overpass-api.de/api/interpreter?data=node(' + bbox + ')(newer:"' + last_week + '");out meta;(way(bn);node(w););out skel;way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;'
         ).on('load', function(xml) {
             d3.select('#map').classed('faded', false);
             layer && map.removeLayer(layer);
@@ -49,6 +49,8 @@ function run() {
             var changesets = {};
 
             layer.eachLayer(function(l) {
+                if (!l.feature.changeset)
+                    return;
                 changesets[l.feature.changeset] = changesets[l.feature.changeset] || {
                     id: l.feature.changeset,
                     time: new Date(l.feature.timestamp),
@@ -71,7 +73,7 @@ function run() {
             });
 
             var datescale = d3.time.scale()
-                .domain(d3.extent(bytime.map(function(b) { return b.time; })))
+                .domain([new Date(last_week), new Date()])
                 .range([0, 1]);
 
             var colint = d3.interpolateRgb('#000', '#f00');
