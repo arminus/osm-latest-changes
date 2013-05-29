@@ -15,7 +15,7 @@ L.tileLayer('http://a.tiles.mapbox.com/v3/tmcw.map-l1m85h7s/{z}/{x}/{y}.png', {
     .addTo(map);
 
 function updateMap() {
-    if (map.getZoom() > 13) {
+    if (map.getZoom() > 12) {
         d3.select('#map').classed('faded', true);
         d3.select('#zoom-in').classed('hide', true);
         d3.select('#results').classed('hide', false);
