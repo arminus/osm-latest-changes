@@ -38,28 +38,46 @@ function run() {
                bounds.getNorthEast().lat + ',' +
                bounds.getNorthEast().lng;
     var last_week = (new Date(new Date()-1000*60*60*24*7)).toISOString();
-    var overpass_query = 'way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
-    d3.xml('http://overpass-api.de/api/interpreter?data='+overpass_query
-        ).on('load', function(xml) {
+    var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
+    d3.json('http://overpass-api.de/api/interpreter?data='+overpass_query
+        ).on('load', function(data) {
+            var geojson = osmtogeojson.toGeojson(data);
             d3.select('#map').classed('faded', false);
             layer && map.removeLayer(layer);
 
-            layer = new L.OSM.DataLayer(xml).addTo(map);
+            var datescale = d3.time.scale()
+                .domain([new Date(last_week), new Date()])
+                .range([0, 1]);
+            var colint = d3.interpolateRgb('#777', '#f00');
+
+            function setStyle(f) {
+                return {
+                    color: colint(datescale(new Date(f.properties.meta.timestamp))),
+                    opacity: 1,
+                    weight: 3
+                }
+            };
+            layer = new L.GeoJSON(geojson, {
+                style: setStyle,
+                pointToLayer: function (feature, latlng) {
+                    return L.circleMarker(latlng, {radius: 8});
+                }})
+                .addTo(map);
 
             var bytime = [];
             var changesets = {};
 
             layer.eachLayer(function(l) {
-                if (!l.feature.changeset)
+                if (!l.feature.properties.meta.changeset)
                     return;
-                changesets[l.feature.changeset] = changesets[l.feature.changeset] || {
-                    id: l.feature.changeset,
-                    time: new Date(l.feature.timestamp),
-                    user: l.feature.user,
+                changesets[l.feature.properties.meta.changeset] = changesets[l.feature.properties.meta.changeset] || {
+                    id: l.feature.properties.meta.changeset,
+                    time: new Date(l.feature.properties.meta.timestamp),
+                    user: l.feature.properties.meta.user,
                     comment: '',
                     features: []
                 };
-                changesets[l.feature.changeset].features.push(l);
+                changesets[l.feature.properties.meta.changeset].features.push(l);
             });
             for (var k in changesets) {
                 bytime.push(changesets[k]);
@@ -73,11 +91,6 @@ function run() {
                 return (+b.time) - (+a.time);
             });
 
-            var datescale = d3.time.scale()
-                .domain([new Date(last_week), new Date()])
-                .range([0, 1]);
-
-            var colint = d3.interpolateRgb('#000', '#f00');
             var results = d3.select('#results');
             var allresults = results
                 .selectAll('div.result')
@@ -102,12 +115,14 @@ function run() {
                 results
                     .selectAll('div.result')
                     .classed('active', function(_) {
-                        return _.id == (d.id || d.feature.feature.changeset);
+                        return _.id == (d.id || d.feature.feature.properties.meta.changeset);
                 });
-                resetStyle();
-                var id = d.id ? d.id : d.feature.feature.changeset;
                 layer.eachLayer(function(l) {
-                    if (l.feature.changeset == id) {
+                    layer.resetStyle(l);
+                })
+                var id = d.id ? d.id : d.feature.feature.properties.meta.changeset;
+                layer.eachLayer(function(l) {
+                    if (l.feature.properties.meta.changeset == id) {
                         l.setStyle({ color: '#0f0' });
                     }
                 });
@@ -135,24 +150,12 @@ function run() {
                    .on('load', function(xml) {
                        d3.select(t).html(
                            '<a href="http://openstreetmap.org/browse/changeset/' + d.id + '" target="_blank">' +
-                           (L.OSM.getTags(xml).comment || '<div class="no-comment">&ndash;</div>') +
+                           (L.OSM.getTags(xml).comment || '<div class="no-comment">&mdash;</div>') +
                            '</a>'
                        );
                    })
                    .get();
                });
-
-           function resetStyle() {
-               layer.eachLayer(function(l) {
-                   l.setStyle({
-                       color: colint(datescale(new Date(l.feature.timestamp))),
-                       opacity: 0.4,
-                       weight: 6
-                   });
-               });
-           }
-
-           resetStyle();
 
     }).get();
 }

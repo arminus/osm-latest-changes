@@ -73,6 +73,9 @@ h2, p {
   .result:hover {
     background-color: #f5f5f5;
   }
+  .result.active {
+    color: #0f0 !important;
+  }
   .result .date {
     padding-left: 5px;
     }
