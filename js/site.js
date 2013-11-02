@@ -19,12 +19,11 @@ function updateMap() {
     if (map.getZoom() > 11) {
         d3.select('#map').classed('faded', true);
         d3.select('#zoom-in').classed('hide', true);
-        d3.select('#results').classed('hide', false);
         run();
     } else {
         d3.select('#map').classed('faded', true);
         d3.select('#zoom-in').classed('hide', false);
-        d3.select('#results').classed('hide', true);
+        clearResults();
         layer && map.removeLayer(layer);
         layer = null;
     }
@@ -159,6 +158,13 @@ function run() {
                });
 
     }).get();
+}
+function clearResults() {
+    var results = d3.select('#results');
+    var allresults = results
+        .selectAll('div.result')
+        .data([])
+        .exit().remove();
 }
 var timeOutId = 0
 map.on('moveend', function() {
