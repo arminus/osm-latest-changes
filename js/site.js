@@ -3,7 +3,7 @@ if (location.hash) {
     var h = location.hash.substr(1).split('/');
     map.setView([h[1], h[2]], h[0]);
 } else {
-    map.setView([37.7, -97.3], 16);
+    map.setView([15, -15], 2);
 }
 
 var layer = null;
