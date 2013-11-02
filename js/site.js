@@ -23,7 +23,7 @@ function updateMap() {
     } else {
         d3.select('#map').classed('faded', true);
         d3.select('#zoom-in').classed('hide', false);
-        clearResults();
+        abort();
         layer && map.removeLayer(layer);
         layer = null;
     }
@@ -31,7 +31,9 @@ function updateMap() {
 
 updateMap();
 
+var xhr;
 function run() {
+    if (xhr) xhr.abort();
     var bounds = map.getBounds();
     var bbox = bounds.getSouthWest().lat + ',' +
                bounds.getSouthWest().lng + ',' +
@@ -39,7 +41,7 @@ function run() {
                bounds.getNorthEast().lng;
     var last_week = (new Date(new Date()-1000*60*60*24*7)).toISOString();
     var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
-    d3.json('http://overpass-api.de/api/interpreter?data='+overpass_query
+    xhr = d3.json('http://overpass-api.de/api/interpreter?data='+overpass_query
         ).on('load', function(data) {
             var geojson = osmtogeojson.toGeojson(data);
             d3.select('#map').classed('faded', false);
@@ -159,7 +161,11 @@ function run() {
 
     }).get();
 }
-function clearResults() {
+function abort() {
+    if (xhr) {
+        xhr.abort();
+        xhr=null;
+    }
     var results = d3.select('#results');
     var allresults = results
         .selectAll('div.result')
