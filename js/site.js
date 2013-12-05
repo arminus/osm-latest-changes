@@ -131,33 +131,41 @@ function run() {
                 if (d3.event) d3.event.preventDefault();
             }
 
-           rl.append('a').classed('load', true).html('&rarr; ').attr('href', '#')
-           .on('click', click);
+            rl.append('a').classed('load', true).html('&rarr; ').attr('href', '#')
+            .on('click', click);
 
-           rl.append('a').text(function(d) {
+            rl.append('a').text(function(d) {
                return d.user + ' ';
-           })
-           .attr('target', '_blank')
-           .attr('href', function(d) {
-               return 'http://openstreetmap.org/user/' + d.user;
-           });
+            })
+            .attr('target', '_blank')
+            .attr('href', function(d) {
+                return 'http://openstreetmap.org/user/' + d.user;
+            });
 
-           rl.append('span').attr('class', 'date').text(function(d) {
-               return moment(d.time).format('MMM Do YYYY, h:mm:ss a ');
-           });
+            rl.append('span').attr('class', 'date').text(function(d) {
+                return moment(d.time).format('MMM Do YYYY, h:mm:ss a ');
+            });
 
-           rl.append('div').attr('class', 'changeset').each(function(d) {
-               var t = this;
-               d3.xml('http://www.openstreetmap.org/api/0.6/changeset/' + d.id)
-                   .on('load', function(xml) {
-                       d3.select(t).html(
-                           '<a href="http://openstreetmap.org/browse/changeset/' + d.id + '" target="_blank">' +
-                           (L.OSM.getTags(xml).comment || '<div class="no-comment">&mdash;</div>') +
-                           '</a>'
-                       );
-                   })
-                   .get();
-               });
+            rl.append('div').attr('class', 'changeset');
+            d3.xml('http://www.openstreetmap.org/api/0.6/changesets?changesets=' + rl.data().map(function(d) {return d.id}).join(','))
+                .on('load', function(xml) {
+                    var css = xml.getElementsByTagName('changeset');
+                    var cs_comments = {};
+                    for (var i=0; i<css.length; i++) {
+                        var tag = css[i].querySelector('tag[k="comment"]');
+                        if (tag)
+                            cs_comments[css[i].getAttribute('id')] = tag.getAttribute('v');
+                    }
+                    rl.select('div.changeset').each(function(d) {
+                        d3.select(this).html(
+                            '<a href="http://openstreetmap.org/browse/changeset/' + d.id + '" target="_blank">' +
+                            (cs_comments[d.id] || '<div class="no-comment">&mdash;</div>') +
+                            '</a>'
+                        );
+                    });
+                })
+                .get();
+
 
     }).get();
 }
