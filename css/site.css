@@ -46,8 +46,8 @@ a:visited {
     position:fixed;
 }
 
-a.load {
-    text-decoration:none;
+span.load {
+    cursor:pointer;
 }
 
 a.l {
@@ -84,8 +84,12 @@ h2, p {
   height: 35px;
   overflow: hidden;
   }
-  .changeset:first-letter { text-transform: capitalize; }
   .changeset a { text-decoration: none;}
+  .changeset a.comment:first-letter { text-transform: capitalize; }
   .result.active .changeset,
   .result:hover .changeset { height: auto; min-height: 35px;}
   .changeset:first-line { font-weight: bold; font-size: 18px; }
+
+.achavi { visibility: hidden; }
+  .result.active .achavi,
+  .result:hover .achavi { visibility: visible; }
