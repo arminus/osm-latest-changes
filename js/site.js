@@ -151,7 +151,7 @@ function run() {
             rl.append('a').attr('class', 'achavi').text('(achavi)')
             .attr('target', '_blank')
             .attr('href', function(d) {
-                return '//nrenner.github.io/achavi/?changeset=' + d.id;
+                return '//overpass-api.de/achavi/?changeset=' + d.id;
             });
 
             rl.append('div').attr('class', 'changeset');
