@@ -155,10 +155,17 @@ function run() {
             });
 
             rl.append('div').attr('class', 'changeset');
-            d3.xml('//www.openstreetmap.org/api/0.6/changesets?changesets=' + rl.data().map(function(d) {return d.id}).join(','))
-                .on('load', function(xml) {
+            var queue = d3.queue();
+            var changesetIds = rl.data().map(function(d) {return d.id});
+            while (changesetIds.length > 0) {
+                queue.defer(d3.xml, '//www.openstreetmap.org/api/0.6/changesets?changesets=' + changesetIds.splice(0,100));
+            }
+            queue.awaitAll(function(error, xmls) {
+                if (error) return console.error(error);
+
+                var changesets = {};
+                xmls.forEach(function(xml) {
                     var css = xml.getElementsByTagName('changeset');
-                    var changesets = {};
                     for (var i=0; i<css.length; i++) {
                         var cid = css[i].getAttribute('id');
                         changesets[cid] = {
@@ -168,19 +175,19 @@ function run() {
                         if (tag)
                             changesets[cid].comment = tag.getAttribute('v');
                     }
-                    rl.select('span.load').each(function(d) {
-                        if (changesets[d.id].discussionCount > 0)
-                            d3.select(this).html('&rArr; ');
-                    });
-                    rl.select('div.changeset').each(function(d) {
-                        d3.select(this).html(
-                            '<a href="//openstreetmap.org/browse/changeset/' + d.id + '" target="_blank" class="comment">' +
-                            (changesets[d.id].comment || '<span class="no-comment">&mdash;</span>') +
-                            '</a>'
-                        );
-                    });
-                })
-                .get();
+                });
+                rl.select('span.load').each(function(d) {
+                    if (changesets[d.id].discussionCount > 0)
+                        d3.select(this).html('&rArr; ');
+                });
+                rl.select('div.changeset').each(function(d) {
+                    d3.select(this).html(
+                        '<a href="//openstreetmap.org/browse/changeset/' + d.id + '" target="_blank" class="comment">' +
+                        (changesets[d.id].comment || '<span class="no-comment">&mdash;</span>') +
+                        '</a>'
+                    );
+                });
+            });
 
 
     }).get();
