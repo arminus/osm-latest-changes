@@ -40,10 +40,58 @@ function run() {
                bounds.getNorthEast().lat + ',' +
                bounds.getNorthEast().lng;
     var last_week = (new Date(new Date()-1000*60*60*24*7)).toISOString();
-    var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
-    xhr = d3.json('//overpass-api.de/api/interpreter?data='+overpass_query
+    //var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
+    var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
+    xhr = d3.xml('//overpass-api.de/api/interpreter?data='+overpass_query
         ).on('load', function(data) {
-            var geojson = osmtogeojson.toGeojson(data);
+            var newData = document.implementation.createDocument(null, 'osm');
+            var oldData = document.implementation.createDocument(null, 'osm');
+            var elements = data.querySelectorAll('action');
+            for (var i=0; i<elements.length; i++) {
+                var element = elements[i];
+                switch (element.getAttribute('type')) {
+                    case 'create':
+                        newData.documentElement.appendChild(element.querySelector("*"));
+                        break;
+                    case 'modify':
+                    case 'delete':
+                        var newElement = element.querySelector('new > *');
+                        var oldElement = element.querySelector('old > *');
+                        // fake changeset id on old data
+                        var newestTs = +new Date(newElement.getAttribute("timestamp"));
+                        if (newElement.tagName == 'way') {
+                          // inherit meta data from newest child node
+                          var nds = newElement.getElementsByTagName('nd');
+                          for (var j=0; j<nds.length; j++) {
+                            var nodeId = nds[j].getAttribute('ref');
+                            var node = newData.querySelector('node[id="'+nodeId+'"]');
+                            if (node === null) continue;
+                            var nodeTs = +new Date(node.getAttribute("timestamp"));
+                            if (nodeTs > newestTs) {
+                              newElement.setAttribute('changeset', node.getAttribute('changeset'));
+                              newElement.setAttribute('user', node.getAttribute('user'));
+                              newElement.setAttribute('uid', node.getAttribute('uid'));
+                              newElement.setAttribute('timestamp', node.getAttribute('timestamp'));
+                            }
+                          }
+                        }
+                        // fake changeset id on old data
+                        oldElement.setAttribute('changeset', newElement.getAttribute('changeset'));
+                        oldElement.setAttribute('user', newElement.getAttribute('user'));
+                        oldElement.setAttribute('uid', newElement.getAttribute('uid'));
+                        oldElement.setAttribute('timestamp', newElement.getAttribute('timestamp'));
+                        if (element.getAttribute('type') == 'modify')
+                            newData.documentElement.appendChild(newElement);
+                        oldData.documentElement.appendChild(oldElement);
+                }
+            }
+
+            var newGeojson = osmtogeojson.toGeojson(newData);
+            var oldGeojson = osmtogeojson.toGeojson(oldData);
+            oldGeojson.features.forEach(function(feature) {
+                feature.properties.__is_old__ = true;
+            });
+
             d3.select('#map').classed('faded', false);
             layer && map.removeLayer(layer);
 
@@ -55,11 +103,14 @@ function run() {
             function setStyle(f) {
                 return {
                     color: colint(datescale(new Date(f.properties.meta.timestamp))),
-                    opacity: 1,
+                    opacity: f.properties.__is_old__ === true ? 0.2 : 1,
                     weight: 3
                 }
             };
-            layer = new L.GeoJSON(geojson, {
+            layer = new L.GeoJSON({
+              type: 'FeatureCollection',
+              features: [].concat(oldGeojson.features).concat(newGeojson.features)
+            }, {
                 style: setStyle,
                 pointToLayer: function (feature, latlng) {
                     return L.circleMarker(latlng, {radius: 8});
