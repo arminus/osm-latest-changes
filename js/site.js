@@ -191,12 +191,14 @@ function run() {
             .html('&rarr; ');
 
             rl.append('a').text(function(d) {
-               return d.user + ' ';
+               return d.user;
             })
             .attr('target', '_blank')
             .attr('href', function(d) {
                 return '//openstreetmap.org/user/' + d.user;
             });
+
+            rl.append('span').text(' ');
 
             rl.append('span').attr('class', 'date').text(function(d) {
                 return moment(d.time).format('MMM Do YYYY, h:mm:ss a');
