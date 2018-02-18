@@ -198,10 +198,24 @@ function run() {
             });
 
             rl.append('span').attr('class', 'date').text(function(d) {
-                return moment(d.time).format('MMM Do YYYY, h:mm:ss a ');
+                return moment(d.time).format('MMM Do YYYY, h:mm:ss a');
             });
 
-            rl.append('a').attr('class', 'achavi').text('(achavi)')
+            rl.append('span').text(' ');
+
+            rl.append('a').attr('class', 'reveal').text('«zoom»')
+            .attr('target', '_blank')
+            .attr('href', '#')
+            .on('click', function(d) {
+                d3.event.preventDefault();
+                map.fitBounds(d.features.reduce(function(a, b) {
+                    return a.extend(b.getBounds());
+                }, new L.LatLngBounds()));
+            });
+
+            rl.append('span').text(' ');
+
+            rl.append('a').attr('class', 'reveal').text('«achavi»')
             .attr('target', '_blank')
             .attr('href', function(d) {
                 return '//overpass-api.de/achavi/?changeset=' + d.id;

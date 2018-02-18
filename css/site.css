@@ -90,6 +90,8 @@ h2, p {
   .result:hover .changeset { height: auto; min-height: 35px;}
   .changeset:first-line { font-weight: bold; font-size: 18px; }
 
-.achavi { visibility: hidden; }
-  .result.active .achavi,
-  .result:hover .achavi { visibility: visible; }
+.reveal { visibility: hidden; }
+  a.reveal { text-decoration: none; opacity: 0.6; }
+  a.reveal:hover { text-decoration: underline; opacity: 1; }
+  .result.active .reveal,
+  .result:hover .reveal { visibility: visible; }
