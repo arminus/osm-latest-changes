@@ -7,6 +7,7 @@ if (location.hash) {
 }
 
 var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
+var days_to_show = 7;
 
 var layer = null;
 map.attributionControl.setPrefix('');
@@ -41,7 +42,7 @@ function run() {
                bounds.getSouthWest().lng + ',' +
                bounds.getNorthEast().lat + ',' +
                bounds.getNorthEast().lng;
-    var last_week = (new Date(new Date()-1000*60*60*24*7)).toISOString();
+    var last_week = (new Date(new Date()-1000*60*60*24*days_to_show)).toISOString();
     //var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
     xhr = d3.xml(overpass_server+'interpreter?data='+overpass_query
@@ -280,3 +281,19 @@ map.on('zoomend', function() {
     clearTimeout(timeOutId);
     timeOutId = setTimeout(updateMap, 500);
 });
+
+d3.select('h2 select')
+    .on('change', function() {
+        switch (this.selectedIndex) {
+            case 0: // yesterday
+                days_to_show = 1;
+                break;
+            case 1: // last week
+                days_to_show = 7;
+                break;
+            case 2: // last month
+                days_to_show = 30;
+                break;
+        }
+        updateMap();
+    });

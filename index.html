@@ -13,8 +13,15 @@
     <body>
         <div class='container pad2'>
             <div class='col6 pad2'>
-              <div id='heading'>
-                <h2>Last Week on OSM</h2>
+              <div>
+                <h2>
+                  <select id="resolution">
+                    <option>Yesterday</option>
+                    <option selected>Last Week</option>
+                    <option>Last Month</option>
+                  </select>
+                  on OSM
+                </h2>
                 <p>Explore latest changes on OpenStreetMap</p>
               </div>
               <div id='results'>

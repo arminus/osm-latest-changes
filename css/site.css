@@ -95,3 +95,16 @@ h2, p {
   a.reveal:hover { text-decoration: underline; opacity: 1; }
   .result.active .reveal,
   .result:hover .reveal { visibility: visible; }
+
+h2 select {
+  width: auto;
+  border: 0;
+  background: transparent;
+  color: black;
+  font-weight: bold;
+  font-size: 28px;
+  padding: 0;
+  margin: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  vertical-align: baseline;
+}
