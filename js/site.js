@@ -226,9 +226,11 @@ function run() {
 
             rl.append('div').attr('class', 'changeset');
             var queue = d3.queue();
-            var changesetIds = rl.data().map(function(d) {return d.id});
+            var changesetIds = rl.data()
+                .map(function(d) {return d.id})
+                .filter(function(changesetId) { return changesetId !== ''; });
             while (changesetIds.length > 0) {
-                queue.defer(d3.xml, '//www.openstreetmap.org/api/0.6/changesets?changesets=' + changesetIds.splice(0,100));
+                queue.defer(d3.xml, '//www.openstreetmap.org/api/0.6/changesets?changesets=' + changesetIds.splice(0,100).join(','));
             }
             queue.awaitAll(function(error, xmls) {
                 if (error) return console.error(error);
