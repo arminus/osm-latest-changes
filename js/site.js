@@ -256,8 +256,13 @@ function abort() {
         .data([])
         .exit().remove();
 }
-var timeOutId = 0
-map.on('moveend', function() {
+var timeOutId = 0;
+map.on('dragend	', function(event) {
+    if (event.distance < 12) return;
+    clearTimeout(timeOutId);
+    timeOutId = setTimeout(updateMap, 500);
+});
+map.on('zoomend', function() {
     clearTimeout(timeOutId);
     timeOutId = setTimeout(updateMap, 500);
 });
