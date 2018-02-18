@@ -6,6 +6,8 @@ if (location.hash) {
     map.setView([15, -15], 2);
 }
 
+var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
+
 var layer = null;
 map.attributionControl.setPrefix('');
 L.hash(map);
@@ -42,7 +44,7 @@ function run() {
     var last_week = (new Date(new Date()-1000*60*60*24*7)).toISOString();
     //var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
-    xhr = d3.xml('//overpass-api.de/api/interpreter?data='+overpass_query
+    xhr = d3.xml(overpass_server+'interpreter?data='+overpass_query
         ).on('load', function(data) {
             var newData = document.implementation.createDocument(null, 'osm');
             var oldData = document.implementation.createDocument(null, 'osm');
@@ -57,7 +59,7 @@ function run() {
                     case 'delete':
                         var newElement = element.querySelector('new > *');
                         var oldElement = element.querySelector('old > *');
-                        // fake changeset id on old data
+                        // fake changeset id on new data
                         var newestTs = +new Date(newElement.getAttribute("timestamp"));
                         if (newElement.tagName == 'way') {
                           // inherit meta data from newest child node
