@@ -2,7 +2,7 @@
 
 Shows recent changes on OpenStreetMap.
 
-Objects that have been modified (incl created or deleted) during the last week (or month or day) are displayed alongside with their [changeset](https://wiki.openstreetmap.org/wiki/Changeset) meta data.
+Objects that have been modified (or created or deleted) during the last week (or month or day) are displayed alongside with their [changeset](https://wiki.openstreetmap.org/wiki/Changeset) meta data.
 
 Newer edits are displayed in more saturated colors than older modifications. Deleted objects as well as the "previous state" of modified map features are displayed semi-transparently. Intermediate states of objects that have been modified more than once in the selected time period are not shown. The site currently doesn't show OSM modifications of relation objects.
 
