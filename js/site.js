@@ -292,10 +292,13 @@ d3.select('h2 select')
             case 0: // yesterday
                 days_to_show = 1;
                 break;
-            case 1: // last week
+            case 1: // last 3 days
+                days_to_show = 3;
+                break;
+            case 2: // last week
                 days_to_show = 7;
                 break;
-            case 2: // last month
+            case 3: // last month
                 days_to_show = 30;
                 break;
         }
