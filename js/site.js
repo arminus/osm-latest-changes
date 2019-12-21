@@ -39,9 +39,9 @@ function run() {
     if (xhr) xhr.abort();
     var bounds = map.getBounds();
     var bbox = bounds.getSouthWest().lat + ',' +
-               bounds.getSouthWest().lng + ',' +
+               bounds.getSouthWest().wrap().lng + ',' +
                bounds.getNorthEast().lat + ',' +
-               bounds.getNorthEast().lng;
+               bounds.getNorthEast().wrap().lng;
     var last_week = (new Date(new Date()-1000*60*60*24*days_to_show)).toISOString();
     //var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
