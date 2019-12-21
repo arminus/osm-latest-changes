@@ -14,7 +14,7 @@ a:visited {
   top: 0;
   right: 0;
   bottom: 0;
-  left: 50%;
+  left: 30%;
   opacity: 1;
   transition: opacity .5s ease-in-out;
   -moz-transition: opacity .5s ease-in-out;
