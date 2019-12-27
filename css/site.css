@@ -21,7 +21,7 @@ a:visited {
   -webkit-transition: opacity .5s ease-in-out;
   }
   #map.faded {
-    opacity: .3;
+    opacity: .5;
   }
 #zoom-in {
   position: fixed;
