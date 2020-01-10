@@ -179,7 +179,7 @@ function run() {
                 var id = d.id ? d.id : d.feature.feature.properties.meta.changeset;
                 layer.eachLayer(function(l) {
                     if (l.feature.properties.meta.changeset == id) {
-                        l.setStyle({ color: '#0f0' });
+                        l.setStyle({ color: '#00c500' });
                     }
                 });
             }

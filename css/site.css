@@ -73,7 +73,7 @@ h2, p {
     background-color: #f5f5f5;
   }
   .result.active {
-    color: #0f0 !important;
+    color: #00c500 !important;
   }
   .result .date {
     padding-left: 5px;
