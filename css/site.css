@@ -98,6 +98,7 @@ h2, p {
 
 h2 select {
   width: auto;
+  height: auto;
   border: 0;
   background: transparent;
   color: black;
