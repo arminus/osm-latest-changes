@@ -7,7 +7,17 @@ if (location.hash) {
 }
 
 var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
-var days_to_show = 7;
+
+var days_to_show;
+//load resolution_from_local_storage from local storage, if available
+var resolution_from_local_storage = localStorage.getItem("resolution");
+if (resolution_from_local_storage) {
+    days_to_show = resolution_from_local_storage;
+    //Select value from local storage in drop down menu
+    document.getElementById('resolution').value=days_to_show;
+}
+//Else, i.e. no resolution saved in local storage: Default to 7 days
+else days_to_show = 7;
 
 var layer = null;
 map.attributionControl.setPrefix('');
@@ -289,7 +299,7 @@ map.on('zoomend', function() {
 d3.select('h2 select')
     .on('change', function() {
         switch (this.selectedIndex) {
-            case 0: // yesterday
+            case 0: // last 24h
                 days_to_show = 1;
                 break;
             case 1: // last 3 days
@@ -302,5 +312,6 @@ d3.select('h2 select')
                 days_to_show = 30;
                 break;
         }
+        localStorage.setItem("resolution", days_to_show);
         updateMap();
     });
