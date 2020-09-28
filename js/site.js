@@ -198,6 +198,7 @@ function run() {
 
             rl.append('span')
             .classed('load', true)
+            .attr('title', 'Click to highlight changeset on map')
             .html('&rarr; ');
 
             rl.append('a').text(function(d) {

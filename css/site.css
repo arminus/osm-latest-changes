@@ -10,15 +10,13 @@ a:visited {
   }
 
 #map {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 30%;
   opacity: 1;
   transition: opacity .5s ease-in-out;
   -moz-transition: opacity .5s ease-in-out;
   -webkit-transition: opacity .5s ease-in-out;
+  flex: 1 1 300px;
+  background: lightpink;
+  height: 100vh;
   }
   #map.faded {
     opacity: .5;
