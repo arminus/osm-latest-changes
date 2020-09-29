@@ -1,6 +1,7 @@
 var map = L.map('map', { });
-if (location.hash) {
-    var h = location.hash.substr(1).split('/');
+var hash_from_local_storage = localStorage.getItem('location-hash');
+if (location.hash || hash_from_local_storage) {
+    var h = (location.hash || hash_from_local_storage).substr(1).split('/');
     map.setView([h[1], h[2]], h[0]);
 } else {
     map.setView([15, -15], 2);
@@ -9,15 +10,16 @@ if (location.hash) {
 var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
 
 var days_to_show;
-//load resolution_from_local_storage from local storage, if available
+// load resolution_from_local_storage from local storage, if available
 var resolution_from_local_storage = localStorage.getItem("resolution");
 if (resolution_from_local_storage) {
     days_to_show = resolution_from_local_storage;
-    //Select value from local storage in drop down menu
+    // select value from local storage in drop down menu
     document.getElementById('resolution').value=days_to_show;
+} else {
+    // else, i.e. no resolution saved in local storage: Default to 7 days
+    days_to_show = 7;
 }
-//Else, i.e. no resolution saved in local storage: Default to 7 days
-else days_to_show = 7;
 
 var layer = null;
 map.attributionControl.setPrefix('');
@@ -40,6 +42,7 @@ function updateMap() {
         layer && map.removeLayer(layer);
         layer = null;
     }
+    localStorage.setItem('location-hash', location.hash);
 }
 
 updateMap();
