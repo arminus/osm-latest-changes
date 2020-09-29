@@ -137,6 +137,7 @@ h2 select {
   overflow: hidden;
   display: flex;
   flex-wrap: wrap;
+  max-width: 100%;
 }
 
 /* Custom scroll bar
