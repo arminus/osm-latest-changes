@@ -131,7 +131,6 @@ h2 select {
   }
 }
 
-
 .container {
   margin: 0 auto;
   overflow: hidden;
@@ -146,6 +145,12 @@ h2 select {
 ::-webkit-scrollbar { 
     width: 6px; 
 } 
+
+/*Increase size of scroll bar on hover*/
+*:hover::-webkit-scrollbar {
+  width: auto;
+  /* height: 10px; */
+}
 
 /* Track */ 
 ::-webkit-scrollbar-track { 
@@ -163,4 +168,3 @@ h2 select {
 ::-webkit-scrollbar-thumb:hover { 
     background: #555; 
 }
-
