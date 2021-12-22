@@ -306,7 +306,7 @@ map.on('zoomend', function() {
     timeOutId = setTimeout(updateMap, 500);
 });
 
-d3.select('h2 select')
+d3.select('#resolution')
     .on('change', function() {
         switch (this.selectedIndex) {
             case 0: // last 24h
