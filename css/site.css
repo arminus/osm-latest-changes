@@ -9,6 +9,10 @@ a:visited {
   padding-bottom: 20px;
   }
 
+#resolution {
+  cursor: pointer;
+}
+
 #map {
   opacity: 1;
   transition: opacity .5s ease-in-out;
