@@ -1,13 +1,31 @@
 a,
 a:hover,
 a:visited {
-    text-decoration:underline;
-    color:inherit;
+  text-decoration:underline;
+  color:inherit;
 }
 
-#heading {
-  padding-bottom: 20px;
-  }
+.heading {
+  position: relative;
+}
+
+.heading h3 {
+  position: absolute;
+  left: 65px;
+  text-align: center;
+}
+
+.heading img {
+  width: 60px;
+  height: 60px;
+}
+
+.heading select {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
 
 #resolution {
   cursor: pointer;
