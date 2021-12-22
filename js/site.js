@@ -216,8 +216,12 @@ function run() {
 
             rl.append('span').text(' ');
 
-            rl.append('span').attr('class', 'date').text(function(d) {
+            rl.append('span')
+            .attr('title', function(d) {
                 return moment(d.time).format('MMM Do YYYY, h:mm:ss a');
+            })
+            .attr('class', 'date').text(function(d) {
+                return moment(d.time).fromNow();
             });
 /*//Links to achavi and zoom removed in order to have more space for map on small screens.
             rl.append('span').text(' ');
