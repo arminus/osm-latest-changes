@@ -1,4 +1,6 @@
-var map = L.map('map', { });
+var map = L.map('map', {
+    gestureHandling: true
+});
 var hash_from_local_storage = localStorage.getItem('location-hash');
 if (location.hash || hash_from_local_storage) {
     var h = (location.hash || hash_from_local_storage).substr(1).split('/');
@@ -217,7 +219,7 @@ function run() {
             rl.append('span').attr('class', 'date').text(function(d) {
                 return moment(d.time).format('MMM Do YYYY, h:mm:ss a');
             });
-
+/*//Links to achavi and zoom removed in order to have more space for map on small screens.
             rl.append('span').text(' ');
 
             rl.append('a').attr('class', 'reveal').text('«zoom»')
@@ -237,7 +239,7 @@ function run() {
             .attr('href', function(d) {
                 return 'https://overpass-api.de/achavi/?changeset=' + d.id;
             });
-
+*/
             rl.append('div').attr('class', 'changeset');
             var queue = d3.queue();
             var changesetIds = rl.data()

@@ -1,44 +1,53 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Latest changes on OpenStreetMap</title>
-        <link rel="Shortcut Icon" href="favicon.ico">
-        <link rel='stylesheet' type='text/css' href='css/style.css' />
-        <link rel='stylesheet' type='text/css' href='css/site.css' />
-        <meta http-equiv='content-type' content='text/html; charset=utf-8' />
-        <link href='js/locationfilter/src/locationfilter.css' rel='stylesheet' />
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css">
-        <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"></script>
-        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.2.1/lodash.min.js"></script>
-    </head>
-    <body>
-        <div class='container'>
-            <div class='col pad2'>
-              <div>
-                <h2>
-                  <select id="resolution">
-                    <option value="1">Last 24 Hours</option>
-                    <option value="3">Last 3 Days</option>
-                    <option value="7" selected>Last 7 Days</option>
-                    <option value="30">Last 30 Days</option>
-                  </select>
-                  on OSM
-                </h2>
-                <p>Explore latest changes on OpenStreetMap</p>
-              </div>
-              <div id='results'>
-              </div>
-            </div>
-            <div id='map' class='faded'></div>
-            <div id='zoom-in' class='hide'>Zoom in to view changes</div>
-        </div>
-        <script src='js/d3.v3.min.js'></script>
-        <script src='js/d3-queue.v3.min.js'></script>
-        <script src='js/moment.min.js'></script>
-        <script src='js/leaflet-hash.js'></script>
-        <script src='js/locationfilter/src/locationfilter.js'></script>
-        <script src='js/leaflet-osm.js'></script>
-        <script src='js/osmtogeojson.js'></script>
-        <script src='js/site.js'></script>
-    </body>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Latest changes on OpenStreetMap</title>
+  <link rel="Shortcut Icon" href="favicon.ico">
+  <link rel='stylesheet' type='text/css' href='css/style.css' />
+  <link rel='stylesheet' type='text/css' href='css/site.css' />
+  <link href='js/locationfilter/src/locationfilter.css' rel='stylesheet' />
+  <link rel="stylesheet" href="//unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+  <link rel="stylesheet" href="//unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css"
+    type="text/css">
+  <script src="//unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+  <script src="//unpkg.com/leaflet-gesture-handling"></script>
+</head>
+
+<body>
+  <div class='container'>
+    <div class='col pad2'>
+      <div>
+        <h2>
+          <select id="resolution">
+            <option value="1">Last 24 Hours</option>
+            <option value="3">Last 3 Days</option>
+            <option value="7" selected>Last 7 Days</option>
+            <option value="30">Last 30 Days</option>
+          </select>
+          on OSM
+        </h2>
+        <p>Explore latest changes on OpenStreetMap</p>
+      </div>
+      <div id='results'>
+      </div>
+    </div>
+    <div id='map' class='faded'>
+      <div id='zoom-in' class='hide'>Zoom in to view changes</div>
+    </div>
+  </div>
+  <script src='js/d3.v3.min.js'></script>
+  <script src='js/d3-queue.v3.min.js'></script>
+  <script src='js/moment.min.js'></script>
+  <script src='js/leaflet-hash.js'></script>
+  <script src='js/locationfilter/src/locationfilter.js'></script>
+  <script src='js/leaflet-osm.js'></script>
+  <script src='js/osmtogeojson.js'></script>
+  <script src='js/site.js'></script>
+</body>
+
 </html>
