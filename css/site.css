@@ -148,7 +148,7 @@ h2 select {
 }
 
 .col {
-  flex: 0 1 325px;
+  flex: 0 1 330px;
   overflow: auto;
   height: 100vh;
 }
