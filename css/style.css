@@ -340,7 +340,7 @@ table {
 /* Padding
 ------------------------------------------------------- */
 .pad1    { padding:10px; }
-.pad2    { padding:20px; }
+.pad2    { padding:5px; }
 .pad21h  { padding:10px 20px; }
 .pad2h   { padding:0 20px; }
 .pad4    { padding:40px; }
