@@ -197,6 +197,11 @@ function run() {
                         l.setStyle({ color: '#00c500' });
                     }
                 });
+
+                //Scroll selected element into view
+                document.querySelector('.active').scrollIntoView({
+                    behavior: 'smooth'
+                  })
             }
 
             rl.on('click', click);
