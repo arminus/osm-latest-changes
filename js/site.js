@@ -9,6 +9,14 @@ if (location.hash || hash_from_local_storage) {
     map.setView([15, -15], 2);
 }
 
+//add "set current location" button to map
+L.control.locate({
+    initialZoomLevel: 14,
+    strings: {
+        title: "Show changes around my current location"
+    }
+}).addTo(map);
+
 var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
 
 var days_to_show;
