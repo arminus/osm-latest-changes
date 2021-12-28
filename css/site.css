@@ -98,15 +98,17 @@ a:visited {
 #zoom-in {
   position: absolute;
   left: 0;
-  top: 40px;
+  top: 0;
   text-align: center;
   font-size: 25px;
   font-weight: bold;
   pointer-events: none;
-  opacity: .5;
+  opacity: .6;
   padding-left: 44px;
   z-index: 444;
   width: 100%;
+  color: white;
+  background-color: red;
 }
 
 .hide {
