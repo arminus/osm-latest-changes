@@ -238,8 +238,8 @@ function run() {
                 .attr('class', 'date').text(function (d) {
                     return moment(d.time).fromNow();
                 });
-            /*//Links to achavi and zoom removed in order to have more space for map on small screens.
-                        rl.append('span').text(' ');
+            //Zoom link removed in order to have more space for map on small screens.
+            /*            rl.append('span').text(' ');
             
                         rl.append('a').attr('class', 'reveal').text('«zoom»')
                         .attr('target', '_blank')
@@ -251,14 +251,15 @@ function run() {
                             }, new L.LatLngBounds()));
                         });
             
+                        */
                         rl.append('span').text(' ');
-            
                         rl.append('a').attr('class', 'reveal').text('«achavi»')
                         .attr('target', '_blank')
+                        .attr('title', 'Get details about this changeset on Achavi')
                         .attr('href', function(d) {
                             return 'https://overpass-api.de/achavi/?changeset=' + d.id;
                         });
-            */
+            
             rl.append('div').attr('class', 'changeset');
             var queue = d3.queue();
             var changesetIds = rl.data()
