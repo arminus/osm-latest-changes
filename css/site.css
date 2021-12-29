@@ -123,10 +123,6 @@ a:visited {
     position:fixed;
 }
 
-span.load {
-    cursor:pointer;
-}
-
 a.l {
     padding:2px;
     text-decoration:underline;

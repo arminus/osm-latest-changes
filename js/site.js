@@ -187,6 +187,7 @@ function run() {
             var rl = allresults.enter()
                 .append('div')
                 .attr('class', 'result')
+                .attr('title', 'Click to highlight changeset on map')
                 .style('color', function (l) {
                     return colint(datescale(l.time));
                 });
@@ -218,13 +219,13 @@ function run() {
 
             rl.append('span')
                 .classed('load', true)
-                .attr('title', 'Click to highlight changeset on map')
                 .html('&rarr; ');
 
             rl.append('a').text(function (d) {
                 return d.user;
             })
-                .attr('target', '_blank')
+            .attr('title', 'Click to go to OSM user page')
+            .attr('target', '_blank')
                 .attr('href', function (d) {
                     return '//openstreetmap.org/user/' + d.user;
                 });
@@ -290,7 +291,7 @@ function run() {
                 });
                 rl.select('div.changeset').each(function (d) {
                     d3.select(this).html(
-                        '<a href="https://openstreetmap.org/browse/changeset/' + d.id + '" target="_blank" class="comment">' +
+                        '<a href="https://openstreetmap.org/browse/changeset/' + d.id + '" target="_blank" class="comment" title="Click to go to OSM changeset page">' +
                         (changesets[d.id].comment || '<span class="no-comment">&mdash;</span>') +
                         '</a>'
                     );
