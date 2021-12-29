@@ -339,6 +339,7 @@ map.on('zoomend', function () {
 });
 
 d3.select('#resolution')
+    .attr('title', 'Select a time range')
     .on('change', function () {
         switch (this.selectedIndex) {
             case 0: // last 24h
