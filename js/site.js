@@ -246,6 +246,10 @@ function run() {
                     }
                 });
 
+                //Make sure that sidebar is displayed
+                let toggleIcon = document.querySelector(".changesets");
+                toggleIcon.classList.remove("hide");
+
                 //Scroll selected element into view
                 document.querySelector('.active').scrollIntoView({
                     behavior: 'smooth'
