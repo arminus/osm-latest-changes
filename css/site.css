@@ -83,6 +83,21 @@ a:visited {
   cursor: pointer;
 }
 
+.hide {
+  display: none;
+}
+
+/* Make sure that sidebar is shown on small screens and hide toggle sidebar icon */
+@media (max-width: 600px){
+  .changesets {
+    display: block;
+  }
+  /* Hide toggle sidebar icon on small screens*/
+.leaflet-control-toggle {
+    display: none;
+  }
+}
+
 #map {
   opacity: 1;
   transition: opacity .5s ease-in-out;
@@ -111,8 +126,19 @@ a:visited {
   background-color: red;
 }
 
-.hide {
-  display: none;
+/* Toggle sidebar icon */
+.leaflet-control-toggle-icon {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin: 5px;
+  background-color: #000;
+  -webkit-mask-image: url(../img/icon-sidebar-left.svg);
+  mask-image: url(../img/icon-sidebar-left.svg-solid.svg);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 .result {
