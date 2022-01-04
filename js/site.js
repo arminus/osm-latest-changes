@@ -19,7 +19,7 @@ L.control.locate({
 
 let sidebar = document.querySelector(".changesets");
 //Toggle sidebar button on map
-L.Control.toggleSidebar = L.Control.extend(
+L.Control.toggleSidebarButton = L.Control.extend(
     {
         options:
         {
@@ -30,18 +30,7 @@ L.Control.toggleSidebar = L.Control.extend(
             L.DomEvent
                 .addListener(controlDiv, 'click', L.DomEvent.stopPropagation)
                 .addListener(controlDiv, 'click', L.DomEvent.preventDefault)
-                .addListener(controlDiv, 'click', function () {
-                    sidebar.classList.toggle("hide");
-                    // let size = map.getSize();
-                    // console.log(size);
-                    // let bounds = map.getBounds();
-                    // console.log(bounds);
-                    map.invalidateSize();//make sure that leaflet updates map size
-                    // size = map.getSize();
-                    // console.log(size);
-                    // bounds = map.getBounds();
-                    // console.log(bounds);
-                });
+                .addListener(controlDiv, 'click', toggleSidebar);
 
             let controlUI = L.DomUtil.create('a', 'leaflet-toggle-sidebar', controlDiv);
             controlUI.title = 'Toggle display of sidebar (Keyboard shortcut "t")';
@@ -52,13 +41,26 @@ L.Control.toggleSidebar = L.Control.extend(
             return controlDiv;
         }
     });
-let toggleSidebar = new L.Control.toggleSidebar();
-map.addControl(toggleSidebar);
+let toggleSidebarButton = new L.Control.toggleSidebarButton();
+map.addControl(toggleSidebarButton);
+
+function toggleSidebar() {
+    sidebar.classList.toggle("hide");
+    // let size = map.getSize();
+    // console.log(size);
+    // let bounds = map.getBounds();
+    // console.log(bounds);
+    map.invalidateSize();//make sure that leaflet updates map size
+    // size = map.getSize();
+    // console.log(size);
+    // bounds = map.getBounds();
+    // console.log(bounds);
+}
 
 //Toggle display of sidebar on press of "t"
 document.addEventListener("keyup", event => {
     if (event.key == "t") {
-        sidebar.classList.toggle("hide");
+        toggleSidebar();
     };
   });
 
