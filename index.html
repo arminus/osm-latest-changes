@@ -10,36 +10,36 @@
   <link rel='stylesheet' type='text/css' href='css/style.css' />
   <link rel='stylesheet' type='text/css' href='css/site.css' />
   <link rel="stylesheet" href="//unpkg.com/leaflet@1.7.1/dist/leaflet.css">
-  <link rel="stylesheet" href="//unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css" type="text/css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.css" />
+  <link rel="stylesheet" href="//unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css"
+    type="text/css">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.css" />
   <script src="//unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
   <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
   <script src="//unpkg.com/leaflet-gesture-handling"></script>
-  <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.js" charset="utf-8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.76.0/dist/L.Control.Locate.min.js"
+    charset="utf-8"></script>
 </head>
 
 <body>
-  <div class="infobox"></div>
   <div class='container'>
+    <div class="infobox"></div>
     <div class='changesets col pad2'>
       <div class="heading">
         <h3>Explore latest changes on OpenStreetMap</h3>
         <img src="./img/favicon.ico" alt="Logo">
-        <!-- <div>
-          <p> -->
-            <select id="resolution">
-              <option value="1">Last 24 Hours</option>
-              <option value="3">Last 3 Days</option>
-              <option value="7" selected>Last 7 Days</option>
-              <option value="30">Last 30 Days</option>
-            </select>
-          <!-- </p>
-        </div> -->
+        <select id="resolution">
+          <option value="1">Last 24 Hours</option>
+          <option value="3">Last 3 Days</option>
+          <option value="7" selected>Last 7 Days</option>
+          <option value="30">Last 30 Days</option>
+        </select>
       </div>
       <div id='results'>
       </div>
     </div>
-    <div id='map' class='faded'>
+    <div class="map-container">
+      <div id='map' class='faded'></div>
       <div id='zoom-in' class='hide'>Zoom in to view changes</div>
       <div id="loading-animation" class="hide"></div>
     </div>

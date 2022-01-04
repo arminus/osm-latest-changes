@@ -98,13 +98,20 @@ a:visited {
   }
 }
 
+.map-container {
+  position: relative;
+  flex: 1 1 auto;
+  height: 100vh;
+}
+
 #map {
+  position: relative;
+  height: 100%;
+  width: 100%;
   opacity: 1;
   transition: opacity .5s ease-in-out;
   -moz-transition: opacity .5s ease-in-out;
   -webkit-transition: opacity .5s ease-in-out;
-  flex: 1 1 auto;
-  height: 100vh;
 }
 #map.faded {
   opacity: .5;
@@ -130,9 +137,9 @@ a:visited {
   position: absolute;
   left: calc(50% - 30px);
   top: 40%;
-  border: 16px solid #f3f3f3;
+  border: 16px solid white;
   border-radius: 50%;
-  border-top: 16px solid #3498db;
+  border-top: 16px solid #2074B6;
   width: 60px;
   height: 60px;
   -webkit-animation: spin 2s linear infinite; /* Safari */
