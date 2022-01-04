@@ -17,7 +17,8 @@ L.control.locate({
     }
 }).addTo(map);
 
-//Toggle sidebar
+let sidebar = document.querySelector(".changesets");
+//Toggle sidebar button on map
 L.Control.toggleSidebar = L.Control.extend(
     {
         options:
@@ -30,8 +31,7 @@ L.Control.toggleSidebar = L.Control.extend(
                 .addListener(controlDiv, 'click', L.DomEvent.stopPropagation)
                 .addListener(controlDiv, 'click', L.DomEvent.preventDefault)
                 .addListener(controlDiv, 'click', function () {
-                    let toggleIcon = document.querySelector(".changesets");
-                    toggleIcon.classList.toggle("hide");
+                    sidebar.classList.toggle("hide");
                     // let size = map.getSize();
                     // console.log(size);
                     // let bounds = map.getBounds();
@@ -44,7 +44,7 @@ L.Control.toggleSidebar = L.Control.extend(
                 });
 
             let controlUI = L.DomUtil.create('a', 'leaflet-toggle-sidebar', controlDiv);
-            controlUI.title = 'Toggle display of sidebar';
+            controlUI.title = 'Toggle display of sidebar (Keyboard shortcut "t")';
             controlUI.href = '#';
 
             let barIcon = L.DomUtil.create('span', 'leaflet-control-toggle-icon', controlUI);
@@ -54,6 +54,13 @@ L.Control.toggleSidebar = L.Control.extend(
     });
 let toggleSidebar = new L.Control.toggleSidebar();
 map.addControl(toggleSidebar);
+
+//Toggle display of sidebar on press of "t"
+document.addEventListener("keyup", event => {
+    if (event.key == "t") {
+        sidebar.classList.toggle("hide");
+    };
+  });
 
 var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
 
@@ -253,8 +260,7 @@ function run() {
                 });
 
                 //Make sure that sidebar is displayed
-                let toggleIcon = document.querySelector(".changesets");
-                toggleIcon.classList.remove("hide");
+                sidebar.classList.remove("hide");
 
                 //Scroll selected element into view
                 document.querySelector('.active').scrollIntoView({
