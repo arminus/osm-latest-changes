@@ -92,10 +92,12 @@ function updateMap() {
     localStorage.setItem('location-hash', location.hash);
 }
 
+let loadingAnimation = document.querySelector("#loading-animation");
+let xhr;
 updateMap();
 
-var xhr;
 function run() {
+    loadingAnimation.classList.remove("hide");//display loading spinner
     if (xhr) xhr.abort();
     var bounds = map.getBounds();
     var bbox = bounds.getSouthWest().lat + ',' +
@@ -106,8 +108,12 @@ function run() {
     //var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
     xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
-    ).on("error", function (error) { message("alarm", error); })
+    ).on("error", function (error) {
+        loadingAnimation.classList.add("hide");//hide loading spinner
+        message("alarm", error);
+    })
         .on('load', function (data) {
+            loadingAnimation.classList.add("hide");//hide loading spinner
             var newData = document.implementation.createDocument(null, 'osm');
             var oldData = document.implementation.createDocument(null, 'osm');
             var elements = data.querySelectorAll('action');
@@ -280,20 +286,7 @@ function run() {
                 .attr('class', 'date').text(function (d) {
                     return moment(d.time).fromNow();
                 });
-            //Zoom link removed in order to have more space for map on small screens.
-            /*            rl.append('span').text(' ');
-            
-                        rl.append('a').attr('class', 'reveal').text('«zoom»')
-                        .attr('target', '_blank')
-                        .attr('href', '#')
-                        .on('click', function(d) {
-                            d3.event.preventDefault();
-                            map.fitBounds(d.features.reduce(function(a, b) {
-                                return a.extend(b.getBounds());
-                            }, new L.LatLngBounds()));
-                        });
-            
-                        */
+
             rl.append('span').text(' ');
             rl.append('a').attr('class', 'reveal').text('«achavi»')
                 .attr('target', '_blank')
@@ -361,6 +354,7 @@ function abort() {
         xhr.abort();
         xhr = null;
     }
+    loadingAnimation.classList.add("hide");//hide loading spinner
     var results = d3.select('#results');
     var allresults = results
         .selectAll('div.result')
