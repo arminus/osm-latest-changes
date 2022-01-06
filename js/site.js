@@ -60,6 +60,7 @@ function toggleSidebar() {
 //Toggle display of sidebar on press of Spacebar
 document.addEventListener("keyup", event => {
     // console.log(event.key);
+    event.preventDefault(); //prevent default, i.e. "page down" for spacebar
     if (event.key == " ") {
         toggleSidebar();
     };
