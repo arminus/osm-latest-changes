@@ -33,7 +33,7 @@ L.Control.toggleSidebarButton = L.Control.extend(
                 .addListener(controlDiv, 'click', toggleSidebar);
 
             let controlUI = L.DomUtil.create('a', 'leaflet-toggle-sidebar', controlDiv);
-            controlUI.title = 'Toggle display of sidebar (Keyboard shortcut "t")';
+            controlUI.title = 'Toggle display of sidebar <Spacebar>';
             controlUI.href = '#';
 
             let barIcon = L.DomUtil.create('span', 'leaflet-control-toggle-icon', controlUI);
@@ -57,9 +57,10 @@ function toggleSidebar() {
     // console.log(bounds);
 }
 
-//Toggle display of sidebar on press of "t"
+//Toggle display of sidebar on press of Spacebar
 document.addEventListener("keyup", event => {
-    if (event.key == "t") {
+    console.log(event.key);
+    if (event.key == " ") {
         toggleSidebar();
     };
   });
