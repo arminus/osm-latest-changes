@@ -59,7 +59,7 @@ function toggleSidebar() {
 
 //Toggle display of sidebar on press of Spacebar
 document.addEventListener("keyup", event => {
-    console.log(event.key);
+    // console.log(event.key);
     if (event.key == " ") {
         toggleSidebar();
     };
