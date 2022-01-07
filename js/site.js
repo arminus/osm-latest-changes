@@ -64,7 +64,7 @@ document.addEventListener("keyup", event => {
     if (event.key == " ") {
         toggleSidebar();
     };
-  });
+});
 
 var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
 
@@ -220,6 +220,10 @@ function run() {
 
             layer.on('click', function (e) {
                 click({ feature: e.layer });
+                //Scroll selected element into view in sidebar
+                document.querySelector('.active').scrollIntoView({
+                    behavior: 'smooth'
+                })
             });
 
             bytime.sort(function (a, b) {
@@ -241,7 +245,7 @@ function run() {
             var rl = allresults.enter()
                 .append('div')
                 .attr('class', 'result')
-                .attr('title', 'Click to highlight changeset on map')
+                .attr('title', 'Changeset is highlighted on map')
                 .style('color', function (l) {
                     return colint(datescale(l.time));
                 });
@@ -266,13 +270,10 @@ function run() {
                 //Make sure that sidebar is displayed
                 sidebar.classList.remove("hide");
 
-                //Scroll selected element into view
-                document.querySelector('.active').scrollIntoView({
-                    behavior: 'smooth'
-                })
             }
 
-            rl.on('click', click);
+            rl.on('click', click);//Highlight changeset on click (desktop/mobile)
+            rl.on('mouseover', click);//Highlight changeset on mouseover (desktop)
 
             rl.append('span')
                 .classed('load', true)
