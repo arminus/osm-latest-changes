@@ -92,8 +92,8 @@ p {
   }
   p:last-child { margin-bottom:0;}
 
-/* Links */
-a {
+/* Links (Not needed. Inherited from div.result)*/
+/* a {
   color:#77c453;
   text-decoration:none;
   }
@@ -105,7 +105,7 @@ a {
     }
   a:active {
     color:#9ed485;
-    }
+    } */
 
 abbr {
   border-bottom:1px dotted #000;
