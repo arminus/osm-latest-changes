@@ -203,6 +203,7 @@ h2, p {
   .result .date {
     padding-left: 5px;
     text-decoration: underline dotted;
+    text-decoration-color: inherit;
     cursor: help;
     }
 
