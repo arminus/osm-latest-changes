@@ -292,3 +292,34 @@ h2 select {
 ::-webkit-scrollbar-thumb:hover { 
     background: #555; 
 }
+
+/* Back to top button */
+.to-top {
+  cursor: pointer;
+  position: absolute;
+  background: #008dff;
+  color: white;
+  opacity: 0.8;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 25px;
+  border-radius: 50%;
+  left: 250px;
+  bottom: 14px;
+  transition: background 0.5s;
+}
+
+.to-top:hover {
+  color: #008dff;
+  background: white;
+}
+
+/* Position "Back to top" button differently on small screens */
+@media (max-width: 600px){
+  .to-top {
+    left: auto;
+    bottom: calc(50% + 15px);
+    right: 25px;
+  }
+}

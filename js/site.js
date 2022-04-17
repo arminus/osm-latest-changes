@@ -404,3 +404,19 @@ d3.select('#resolution')
         localStorage.setItem("resolution", days_to_show);
         updateMap();
     });
+
+//Display "Back-to-top" button if changesets in sidebar are overflowing
+sidebar.addEventListener("scroll", event => {
+    let toTop = document.querySelector(".to-top");
+    // console.log(sidebar.scrollTop);
+    if (sidebar.scrollTop > 50) toTop.classList.remove("hide");//display to-top button
+    else toTop.classList.add("hide");//hide to-top button
+});
+
+//Scroll to top when clicking on "Back-to-top" button
+function scrollToTop() {
+    sidebar.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
