@@ -373,13 +373,18 @@ function abort() {
         .exit().remove();
 }
 
-var timeOutId = 0;
+let timeOutId = 0;
+let stopDownload;
 map.on('dragend	', function (event) {
     if (event.distance < 12) return;
+    stopDownload = isChecked();
+    if (stopDownload) return;
     clearTimeout(timeOutId);
     timeOutId = setTimeout(updateMap, 500);
 });
 map.on('zoomend', function () {
+    stopDownload = isChecked();
+    if (stopDownload) return;
     clearTimeout(timeOutId);
     timeOutId = setTimeout(updateMap, 500);
 });
@@ -404,6 +409,15 @@ d3.select('#resolution')
         localStorage.setItem("resolution", days_to_show);
         updateMap();
     });
+
+//Check if stopDownloadCheckbox is checked
+function isChecked() {
+    const stopDownloadCheckbox = document.querySelector("#stopDownloadCheckbox");
+    //checked
+    if (stopDownloadCheckbox.checked) return true;
+    //not checked
+    else return false;
+}
 
 //Display "Back-to-top" button if changesets in sidebar are overflowing
 sidebar.addEventListener("scroll", event => {
