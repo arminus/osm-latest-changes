@@ -374,17 +374,17 @@ function abort() {
 }
 
 let timeOutId = 0;
-let stopDownload;
+let stopDownloadCheckbox;
 map.on('dragend	', function (event) {
     if (event.distance < 12) return;
-    stopDownload = isChecked();
-    if (stopDownload) return;
+    stopDownloadCheckbox = isChecked();
+    if (stopDownloadCheckbox) return;//if stopDownloadCheckbox is checked stop function execution. Else proceed.
     clearTimeout(timeOutId);
     timeOutId = setTimeout(updateMap, 500);
 });
 map.on('zoomend', function () {
-    stopDownload = isChecked();
-    if (stopDownload) return;
+    stopDownloadCheckbox = isChecked();
+    if (stopDownloadCheckbox) return;//if stopDownloadCheckbox is checked stop function execution. Else proceed.
     clearTimeout(timeOutId);
     timeOutId = setTimeout(updateMap, 500);
 });
@@ -412,11 +412,7 @@ d3.select('#resolution')
 
 //Check if stopDownloadCheckbox is checked
 function isChecked() {
-    const stopDownloadCheckbox = document.querySelector("#stopDownloadCheckbox");
-    //checked
-    if (stopDownloadCheckbox.checked) return true;
-    //not checked
-    else return false;
+    return document.querySelector("#stopDownloadCheckbox").checked; //returns true (checked) or false (unchecked)
 }
 
 //Display "Back-to-top" button if changesets in sidebar are overflowing
