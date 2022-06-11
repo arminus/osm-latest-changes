@@ -1,5 +1,5 @@
 var map = L.map('map', {
-    gestureHandling: true
+    gestureHandling: activateGestureHandling()
 });
 var hash_from_local_storage = localStorage.getItem('location-hash');
 if (location.hash || hash_from_local_storage) {
@@ -8,6 +8,20 @@ if (location.hash || hash_from_local_storage) {
 } else {
     map.setView([15, -15], 2);
 }
+
+//Activate gesture handling only on small screens ("use two fingers to pan and zoom map")
+function activateGestureHandling() {
+    if (screen.width < 600) return true;
+    else return false;
+}
+
+//If screen width changes during use of app (e.g. turning phone from portrait to landscape)
+//--> Activate gesture handling if screen width is < 600px
+window.addEventListener("resize", () => {
+    // console.log(screen.width);
+    if (screen.width < 600) map.gestureHandling.enable();
+    else map.gestureHandling.disable();
+});
 
 //add "set current location" button to map
 L.control.locate({
