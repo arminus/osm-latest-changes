@@ -345,9 +345,10 @@ function run() {
                     }
                 });
                 rl.select('span.load').each(function (d) {
-                    if (changesets[d.id].discussionCount > 0)
+                    if (changesets[d.id].discussionCount > 0) {
                         d3.select(this).html('&#128489; ');
-                        d3.select(this).attr('title', 'Changeset has comments')
+                        d3.select(this).attr('title', 'Changeset has comments');
+                    }
                 });
                 rl.select('div.changeset').each(function (d) {
                     d3.select(this).html(
