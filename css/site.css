@@ -205,6 +205,9 @@ h2, p {
     text-decoration: underline dotted;
     cursor: help;
     }
+    .result .load {
+      cursor: default;
+    }
 
 .changeset {
   padding: 0px 0px 5px 20px;
