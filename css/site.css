@@ -44,32 +44,27 @@ a:visited {
   color: black;
 }
 
+.background {
+  background-color: #e5e5e5;
+}
+
 .heading {
   position: relative;
+  width: 300px;
+  height: auto;
+  margin: 0px auto;
+  padding: 5px 0;
 }
 
 .heading h3 {
-  text-align: center;
-}
-@media (min-width: 601px){
-  .heading h3 {
-    position: absolute;
-    left: 65px;
-  }
+  position: absolute;
+  left: 70px;
+  top: 0px;
 }
 
 .heading img {
   width: 60px;
   height: 60px;
-}
-@media (max-width: 600px){
-  .heading img {
-    position: relative;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    margin-bottom: 10px;
-  }
 }
 
 .heading select {

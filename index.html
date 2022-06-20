@@ -61,24 +61,26 @@
 <body>
   <div class='container'>
     <div class="infobox"></div>
-    <div class='changesets col pad2'>
-      <div class="heading">
-        <h3>Explore latest changes on OpenStreetMap</h3>
-        <a href="https://github.com/tyrasd/latest-changes" target="_blank" rel="noopener noreferrer"><img
-            src="./img/favicon.ico" alt="Logo" title="Go to GitHub repository"></a>
-        <select id="resolution">
-          <option value="1">Last 24 Hours</option>
-          <option value="3">Last 3 Days</option>
-          <option value="7" selected>Last 7 Days</option>
-          <option value="30">Last 30 Days</option>
-        </select>
+    <div class='changesets col'>
+      <div class="background">
+        <div class="heading">
+          <a href="https://github.com/tyrasd/latest-changes" target="_blank" rel="noopener noreferrer"><img
+              src="./img/favicon.ico" alt="Logo" title="Go to GitHub repository"></a>
+          <h3>Explore latest changes on OpenStreetMap</h3>
+          <select id="resolution">
+            <option value="1">Last 24 Hours</option>
+            <option value="3">Last 3 Days</option>
+            <option value="7" selected>Last 7 Days</option>
+            <option value="30">Last 30 Days</option>
+          </select>
+          <div
+            title="If this checkbox is ticked you can zoom and pan without triggering a new download of changesets. This can be helpful to have a closer look at the changes.">
+            <input type="checkbox" id="stopDownloadCheckbox" name="stopDownload">
+            <label for="stopDownloadCheckbox">Temporarily stop changeset download</label>
+          </div>
+        </div>
       </div>
-      <div
-        title="If this checkbox is ticked you can zoom and pan without triggering a new download of changesets. This can be helpful to have a closer look at the changes.">
-        <input type="checkbox" id="stopDownloadCheckbox" name="stopDownload">
-        <label for="stopDownloadCheckbox">Temporarily stop changeset download</label>
-      </div>
-      <div id='results'>
+      <div id='results' class='pad2'>
       </div>
       <div class="to-top hide" onclick="scrollToTop()" title="Back to top"><svg xmlns='http://www.w3.org/2000/svg'
           class='ionicon' viewBox='0 0 512 512'>
