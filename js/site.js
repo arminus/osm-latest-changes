@@ -11,15 +11,15 @@ if (location.hash || hash_from_local_storage) {
 
 //Activate gesture handling only on small screens ("use two fingers to pan and zoom map")
 function activateGestureHandling() {
-    if (screen.width < 600) return true;
+    if (screen.width < 601) return true;
     else return false;
 }
 
 //If screen width changes during use of app (e.g. turning phone from portrait to landscape)
-//--> Activate gesture handling if screen width is < 600px
+//--> Activate gesture handling if screen width is < 601px
 window.addEventListener("resize", () => {
     // console.log(screen.width);
-    if (screen.width < 600) map.gestureHandling.enable();
+    if (screen.width < 601) map.gestureHandling.enable();
     else map.gestureHandling.disable();
 });
 
