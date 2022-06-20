@@ -50,10 +50,16 @@ a:visited {
 
 .heading {
   position: relative;
-  width: 300px;
+  width: 293px;
   height: auto;
-  margin: 0px auto;
   padding: 5px 0;
+}
+
+/* Center the heading on small screens */
+@media (max-width: 600px){
+  .heading {
+    margin: 0px auto;
+  }
 }
 
 .heading h3 {
