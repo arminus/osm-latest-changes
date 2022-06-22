@@ -283,18 +283,18 @@ function run() {
 
                 //Make sure that sidebar is displayed
                 sidebar.classList.remove("hide");
-
             }
 
             rl.on('click', click);//Highlight changeset on click (desktop/mobile)
             rl.on('mouseover', click);//Highlight changeset on mouseover (desktop)
 
             let stopDownloadCheckbox = document.querySelector("#stopDownloadCheckbox");
+
             //"Zoom to changeset" button
-            rl.append('span')
+            rl.append('div')
                 .classed('zoom', true)
                 .attr('title', 'Zoom to changeset')
-                .html('&#x1F50E; ')//Unicode glyph for a loupe
+                //.html('&#x1F50E; ')//Unicode glyph for a loupe
                 .on('click', function (d) {
                     if (stopDownloadCheckbox.checked === false) {
                         //First stop download of changesets on pan and zoom
@@ -312,7 +312,15 @@ function run() {
                     });
                     //Zoom and pan to featureGroup
                     map.fitBounds(changesetLayers.getBounds());
-                });
+                })
+                .append('svg')
+                .classed('eye', true)
+                .append('use')
+                .attr('href', 'img/eye.svg#eye');
+
+            //Text bubble symbol
+            rl.append('span')
+                .classed('text-bubble', true);
 
             //User name
             rl.append('a').text(function (d) {
@@ -367,9 +375,9 @@ function run() {
                             changesets[cid].comment = tag.getAttribute('v');
                     }
                 });
-                rl.select('span.load').each(function (d) {
+                rl.select('span.text-bubble').each(function (d) {
                     if (changesets[d.id].discussionCount > 0) {
-                        d3.select(this).html('&#128489; ');
+                        d3.select(this).html('&#128489; ');//Speech bubble glyphicon
                         d3.select(this).attr('title', 'Changeset has comments');
                     }
                 });
