@@ -135,7 +135,7 @@ function run() {
     xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
     ).on("error", function (error) {
         loadingAnimation.classList.add("hide");//hide loading spinner
-        message("alarm", error);
+        message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
     })
         .on('load', function (data) {
             loadingAnimation.classList.add("hide");//hide loading spinner
@@ -289,14 +289,36 @@ function run() {
             rl.on('click', click);//Highlight changeset on click (desktop/mobile)
             rl.on('mouseover', click);//Highlight changeset on mouseover (desktop)
 
+            let stopDownloadCheckbox = document.querySelector("#stopDownloadCheckbox");
+            //"Zoom to changeset" button
             rl.append('span')
-                .classed('load', true)
-                .html('&rarr; ');
+                .classed('zoom', true)
+                .attr('title', 'Zoom to changeset')
+                .html('&#x1F50E; ')//Unicode glyph for a loupe
+                .on('click', function (d) {
+                    if (stopDownloadCheckbox.checked === false) {
+                        //First stop download of changesets on pan and zoom
+                        stopDownloadCheckbox.checked = true;
+                        //Inform user
+                        message("success", "Download of changesets has been temporarily stopped");
+                    }
+                    //Check each layer on the map. If it belongs to clicked changeset --> add it to a featureGroup
+                    //(featureGroup needed because layers with points only don't have a getBounds function)
+                    d3.event.preventDefault();
+                    var id = d.id ? d.id : d.feature.feature.properties.meta.changeset;
+                    var changesetLayers = L.featureGroup();
+                    layer.eachLayer(function (l) {
+                        if (l.feature.properties.meta.changeset == id) l.addTo(changesetLayers);
+                    });
+                    //Zoom and pan to featureGroup
+                    map.fitBounds(changesetLayers.getBounds());
+                });
 
+            //User name
             rl.append('a').text(function (d) {
                 return d.user;
             })
-                .attr('title', 'Click to go to OSM user page')
+                .attr('title', 'Go to OSM user page')
                 .attr('target', '_blank')
                 .attr('href', function (d) {
                     return '//openstreetmap.org/user/' + d.user;
@@ -312,6 +334,7 @@ function run() {
                     return moment(d.time).fromNow();
                 });
 
+            //link to achavi
             rl.append('span').text(' ');
             rl.append('a').attr('class', 'reveal').text('«achavi»')
                 .attr('target', '_blank')
@@ -358,13 +381,11 @@ function run() {
                     );
                 });
             });
-
-
         }).get();
 }
 
-//Error message in case of no results from Overpass
-function message(type, error) {
+//Show a modal with a message
+function message(type, text) {
     // console.log(error.statusText);
 
     // Get the infobox modal
@@ -372,7 +393,7 @@ function message(type, error) {
 
     infobox.classList.remove("show", "alarm", "success");
     void infobox.offsetWidth; //Found here: https://css-tricks.com/restart-css-animation/#update-another-javascript-method-to-restart-a-css-animation
-    infobox.innerHTML = "Server error: " + error.statusText;
+    infobox.innerHTML = text;
     infobox.classList.add("show", type);
 }
 
@@ -390,17 +411,14 @@ function abort() {
 }
 
 let timeOutId = 0;
-let stopDownloadCheckbox;
 map.on('dragend	', function (event) {
     if (event.distance < 12) return;
-    stopDownloadCheckbox = isChecked();
-    if (stopDownloadCheckbox) return;//if stopDownloadCheckbox is checked stop function execution. Else proceed.
+    if (stopDownloadCheckbox.checked) return;//if stopDownloadCheckbox is checked stop function execution. Else proceed.
     clearTimeout(timeOutId);
     timeOutId = setTimeout(updateMap, 500);
 });
 map.on('zoomend', function () {
-    stopDownloadCheckbox = isChecked();
-    if (stopDownloadCheckbox) return;//if stopDownloadCheckbox is checked stop function execution. Else proceed.
+    if (stopDownloadCheckbox.checked) return;//if stopDownloadCheckbox is checked stop function execution. Else proceed.
     clearTimeout(timeOutId);
     timeOutId = setTimeout(updateMap, 500);
 });
@@ -425,11 +443,6 @@ d3.select('#resolution')
         localStorage.setItem("resolution", days_to_show);
         updateMap();
     });
-
-//Check if stopDownloadCheckbox is checked
-function isChecked() {
-    return document.querySelector("#stopDownloadCheckbox").checked; //returns true (checked) or false (unchecked)
-}
 
 //Display "Back-to-top" button if changesets in sidebar are overflowing
 sidebar.addEventListener("scroll", event => {
