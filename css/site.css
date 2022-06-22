@@ -213,6 +213,7 @@ h2, p {
     display: flex;
     align-items: center;
     margin-right: 8px;
+    fill: #e5e5e5;
   }
   .eye {
     width: 40px;

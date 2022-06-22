@@ -383,7 +383,7 @@ function run() {
                 });
                 rl.select('div.changeset').each(function (d) {
                     d3.select(this).html(
-                        '<a href="https://openstreetmap.org/browse/changeset/' + d.id + '" target="_blank" class="comment" title="Click to go to OSM changeset page">' +
+                        '<a href="https://openstreetmap.org/browse/changeset/' + d.id + '" target="_blank" class="comment" title="Go to OSM changeset page">' +
                         (changesets[d.id].comment || '<span class="no-comment">&mdash;</span>') +
                         '</a>'
                     );
