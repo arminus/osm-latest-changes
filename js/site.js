@@ -312,11 +312,19 @@ function run() {
                     });
                     //Zoom and pan to featureGroup
                     map.fitBounds(changesetLayers.getBounds());
+                    //On small screens (screen width < 601px) scroll all the way down, so that map is completely visible on screen
+                    if (screen.width < 601) {
+                        let mapContainer = document.querySelector(".map-container");//does not work with map container, thus "window"
+                        window.scrollTo({
+                            top: 2222,
+                            behavior: 'smooth'
+                        });
+                    }
                 })
                 .append('svg')
-                .classed('eye', true)
+                .classed('loupe', true)
                 .append('use')
-                .attr('href', 'img/eye.svg#eye');
+                .attr('href', 'img/icons.svg#loupe');
 
             //Text bubble symbol
             rl.append('span')

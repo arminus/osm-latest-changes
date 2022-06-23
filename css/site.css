@@ -204,24 +204,39 @@ h2, p {
     text-decoration: underline dotted;
     cursor: help;
     }
+
   .result .zoom {
-    cursor: pointer;
-    width: 40px;
-    height: 60px;
-    /* background-color: lightblue; */
     float: left;
     display: flex;
     align-items: center;
-    margin-right: 8px;
-    fill: #e5e5e5;
-  }
-  .eye {
-    width: 40px;
     height: 40px;
+    width: 40px;
+    padding: 5px;
+    border-radius: 50%;
+    margin-right: 5px;
+    margin-top: 5px;
+    background-color: #e5e5e5;
+    stroke: #777;
+    box-shadow: 0 2px 4px darkslategrey;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
-    .result .zoom:hover {
-    fill: #008dff;
+  
+  .result .zoom:active {
+    box-shadow: 0 0 2px darkslategray;
+    transform: translateY(2px);
   }
+  
+  .result .zoom:hover {
+    background-color: #eee;
+  }
+
+  .loupe {
+    width: 20px;
+    height: 20px;
+    margin-left: 6px;
+  }
+
   .result .text-bubble {
     cursor: default;
   }
