@@ -132,6 +132,7 @@ function run() {
     var last_week = (new Date(new Date() - 1000 * 60 * 60 * 24 * days_to_show)).toISOString();
     //var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
+    // console.log('www.' + overpass_server + 'interpreter?data=' + overpass_query);
     xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
     ).on("error", function (error) {
         loadingAnimation.classList.add("hide");//hide loading spinner
@@ -183,6 +184,7 @@ function run() {
 
             var newGeojson = osmtogeojson.toGeojson(newData);
             var oldGeojson = osmtogeojson.toGeojson(oldData);
+            console.log(oldGeojson);
             oldGeojson.features.forEach(function (feature) {
                 feature.properties.__is_old__ = true;
             });
@@ -212,10 +214,11 @@ function run() {
                 }
             })
                 .addTo(map);
-
+// console.log(layer);
             var bytime = [];
             var changesets = {};
 
+            //hier musst du wahrscheinlich den code für das popup einfügen
             layer.eachLayer(function (l) {
                 if (!l.feature.properties.meta.changeset)
                     return;
@@ -227,6 +230,9 @@ function run() {
                     features: []
                 };
                 changesets[l.feature.properties.meta.changeset].features.push(l);
+// console.log(l);
+                l.bindPopup("id: "+ l.feature.properties.id);
+
             });
             for (var k in changesets) {
                 bytime.push(changesets[k]);
