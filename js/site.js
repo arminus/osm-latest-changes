@@ -130,9 +130,9 @@ function run() {
         bounds.getNorthEast().lat + ',' +
         bounds.getNorthEast().wrap().lng;
     var last_week = (new Date(new Date() - 1000 * 60 * 60 * 24 * days_to_show)).toISOString();
-    //var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
+    // var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
-    // console.log('www.' + overpass_server + 'interpreter?data=' + overpass_query);
+    // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
     // xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
     xhr = d3.xml("js/example.xml" //For example xml: Hide line above and unhide this line
@@ -141,6 +141,7 @@ function run() {
         message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
     })
         .on('load', function (data) {
+            // console.log(data);
             loadingAnimation.classList.add("hide");//hide loading spinner
             var newData = document.implementation.createDocument(null, 'osm');
             var oldData = document.implementation.createDocument(null, 'osm');
@@ -219,8 +220,7 @@ function run() {
             var changesets = {};
 
             layer.eachLayer(function (l) {
-                if (!l.feature.properties.meta.changeset)
-                    return;
+                if (!l.feature.properties.meta.changeset) return;
                 changesets[l.feature.properties.meta.changeset] = changesets[l.feature.properties.meta.changeset] || {
                     id: l.feature.properties.meta.changeset,
                     time: new Date(l.feature.properties.meta.timestamp),
@@ -230,22 +230,26 @@ function run() {
                 };
                 changesets[l.feature.properties.meta.changeset].features.push(l);
 
-                const tableHtml = createTable(l.feature.properties.id)
-                l.bindPopup(tableHtml, {
-                    minWidth: 560,
-                    maxHeight: 600
-                });
             });
             for (var k in changesets) {
                 bytime.push(changesets[k]);
             }
 
             layer.on('click', function (e) {
-                click({ feature: e.layer });
                 //Scroll selected element into view in sidebar
+                click({ feature: e.layer });
                 document.querySelector('.active').scrollIntoView({
                     behavior: 'smooth'
+                });
+
+                const tableHtml = createTable(e.layer.feature.properties.id)
+
+                L.popup({
+                    minWidth: screen.width < 601 ? 300 : "auto" //Limit table width to 300px on small screens
                 })
+                    .setLatLng(e.latlng)
+                    .setContent(tableHtml)
+                    .openOn(map);
             });
 
             bytime.sort(function (a, b) {
@@ -296,7 +300,7 @@ function run() {
                     // document.querySelector("#element-info").innerHTML = elementInfoHtml;
 
                     //Variables
-                     tableHtml += `<table class="table-container">`;
+                    tableHtml += `<table class="table-container">`;
 
                     //Object with all key-value pairs for new and old and relevant meta tags for table
                     const keyvalues = { old: { meta: {}, tags: {} }, new: { meta: {}, tags: {} } };
@@ -309,24 +313,24 @@ function run() {
                         //Create table
                         tableHtml += `
                             <thead>
-                            <tr>
-                                <th>Tag</th>
-                                <th>New</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>version</td>
-                                <td>${node[0].getAttribute("version")}</td>
-                            </tr>
-                            <tr>
-                                <td>timestamp</td>
-                                <td>${node[0].getAttribute("timestamp")}</td>
-                            </tr>
-                            <tr>
-                                <td>user</td>
-                                <td>${node[0].getAttribute("user")}</td>
-                            </tr>
+                                <tr>
+                                    <th>Tag</th>
+                                    <th>New</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>version</td>
+                                    <td>${node[0].getAttribute("version")}</td>
+                                </tr>
+                                <tr>
+                                    <td>timestamp</td>
+                                    <td>${node[0].getAttribute("timestamp")}</td>
+                                </tr>
+                                <tr>
+                                    <td>user</td>
+                                    <td>${node[0].getAttribute("user")}</td>
+                                </tr>
                         `;
 
                         for (let i = 0; i < keysNew.length; i++) {
@@ -370,8 +374,7 @@ function run() {
 
                         //Create table
                         tableHtml += `
-                            <table class="table-container">
-                                <thead>
+                            <thead>
                                 <tr>
                                     <th>Tag</th>
                                     <th>Old</th>
@@ -416,8 +419,9 @@ function run() {
 
                             //Case 4: Tags similar --> Don't display this key-value pair
                             // else continue;
-                            // Option: Add "unchanged-counter" and display message at the bottom of table:
-                            //"...and xx unchanged tags"
+                            // Better option: Add a class "unchanged", hide them and add a button to show similar tags
+                            // Table height needs to update see https://leafletjs.com/reference.html#divoverlay-contentupdate
+                            // table rows can be animated https://stackoverflow.com/a/37376274/5263954
 
                             tableHtml += `
                                 <tr ${(cssClass ? 'class=' + cssClass : '')}>
@@ -430,7 +434,7 @@ function run() {
                     }
 
                     tableHtml += `
-                        </tbody>
+                            </tbody>
                         </table>
                     `;
                     // document.querySelector("#tags-comparison").innerHTML = tableHtml;
