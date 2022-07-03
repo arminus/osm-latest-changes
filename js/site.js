@@ -243,9 +243,11 @@ function run() {
                 });
 
                 const tableHtml = createTable(e.layer.feature.properties.id)
+                let mapContainer = document.querySelector(".map-container");
 
                 L.popup({
-                    minWidth: screen.width < 601 ? 300 : "auto" //Limit table width to 300px on small screens
+                    maxWidth: mapContainer.clientWidth - 45,
+                    maxHeight: mapContainer.clientHeight - 40
                 })
                     .setLatLng(e.latlng)
                     .setContent(tableHtml)
@@ -495,8 +497,8 @@ function run() {
                     map.fitBounds(changesetLayers.getBounds());
                     //On small screens (screen width < 601px) scroll all the way down, so that map is completely visible on screen
                     if (screen.width < 601) {
-                        let mapContainer = document.querySelector(".map-container");//does not work with map container, thus "window"
-                        window.scrollTo({
+                        let mapContainer = document.querySelector(".map-container");
+                        window.scrollTo({ //does not work with map container, thus "window"
                             top: 2222,
                             behavior: 'smooth'
                         });
