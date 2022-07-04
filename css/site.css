@@ -401,15 +401,15 @@ tr {
   border-bottom: 1px solid black;
 }
 
-.green {
+.create {
   background-color: #b9ffb9;
 }
 
-.red {
+.delete {
   background-color: #ff9494;
 }
 
-.yellow {
+.modify {
   background-color: yellow;
 }
 

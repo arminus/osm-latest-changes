@@ -354,13 +354,13 @@
 </action>
 <action type="delete">
 <old>
-  <node id="1501" lat="10.0000000" lon="5.0100000" version="1" timestamp="2013-07-01T09:01:11Z" changeset="496" uid="42" user="foo">
+  <node id="1501" lat="47.65" lon="9.47" version="1" timestamp="2013-07-01T09:01:11Z" changeset="496" uid="42" user="foo">
     <tag k="foo" v="bar_1501"/>
     <tag k="foo_1501" v="bar"/>
   </node>
 </old>
 <new>
-  <node id="1501" visible="false" version="2" timestamp="2013-07-01T09:02:11Z" changeset="496" uid="42" user="foo"/>
+  <node id="1501" visible="false" version="2" timestamp="2022-07-01T19:02:11Z" changeset="493" uid="47" user="bar"/>
 </new>
 </action>
 <action type="modify">
@@ -443,6 +443,32 @@
     <tag k="width" v="2"/>
   </way>
 </new>
+</action>
+<action type="create">
+  <way id="1072310202" version="1" timestamp="2022-06-22T13:47:54Z" changeset="122713614" uid="257555" user="rene78">
+    <bounds minlat="47.6692435" minlon="9.4937877" maxlat="47.6693701" maxlon="9.4941668"/>
+    <nd ref="9838811711" lat="47.6693701" lon="9.4938169"/>
+    <nd ref="9838811712" lat="47.6693517" lon="9.4938151"/>
+    <nd ref="9838811713" lat="47.6693466" lon="9.4938004"/>
+    <nd ref="9838811714" lat="47.6693406" lon="9.4937909"/>
+    <nd ref="9838811715" lat="47.6693303" lon="9.4937877"/>
+    <nd ref="9838811716" lat="47.6693212" lon="9.4937909"/>
+    <nd ref="9838834417" lat="47.6693152" lon="9.4938030"/>
+    <nd ref="9838834418" lat="47.6693109" lon="9.4938119"/>
+    <nd ref="5922176637" lat="47.6692559" lon="9.4938119"/>
+    <nd ref="9838834419" lat="47.6692529" lon="9.4939701"/>
+    <nd ref="9838834420" lat="47.6692448" lon="9.4939701"/>
+    <nd ref="9838834421" lat="47.6692435" lon="9.4940320"/>
+    <nd ref="9838834422" lat="47.6692688" lon="9.4940339"/>
+    <nd ref="9838834423" lat="47.6692650" lon="9.4941596"/>
+    <nd ref="2045976742" lat="47.6693615" lon="9.4941668"/>
+    <nd ref="9838811711" lat="47.6693701" lon="9.4938169"/>
+    <tag k="addr:city" v="Friedrichshafen"/>
+    <tag k="addr:housenumber" v="9/1"/>
+    <tag k="addr:postcode" v="88046"/>
+    <tag k="addr:street" v="Gutenbergstraße"/>
+    <tag k="building" v="yes"/>
+  </way>
 </action>
 
 </osm>

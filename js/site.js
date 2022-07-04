@@ -337,7 +337,7 @@ function run() {
 
                         for (let i = 0; i < keysNew.length; i++) {
                             tableHtml += `
-                                <tr class="green">
+                                <tr class="create">
                                     <td>${keysNew[i].getAttribute('k')}</td>
                                     <td>${keysNew[i].getAttribute('v')}</td>
                                 </tr>
@@ -408,16 +408,16 @@ function run() {
                             let cssClass;
                             //Case 1: Tag deleted in new --> Background color red, change from "undefined" to ""
                             if (!newTag) {
-                                cssClass = "red";
+                                cssClass = "delete";
                                 newTag = "";
                             }
-                            //Case 2: Tag created in new --> Background color green, change from "undefined" to ""
+                            //Case 2: Tag created in new --> Background color create, change from "undefined" to ""
                             else if (!oldTag) {
-                                cssClass = "green";
+                                cssClass = "create";
                                 oldTag = "";
                             }
                             //Case 3: Tag different in new --> Background color yellow
-                            else if (oldTag !== newTag) cssClass = "yellow";
+                            else if (oldTag !== newTag) cssClass = "modify";
 
                             //Case 4: Tags similar --> Don't display this key-value pair
                             else cssClass = "'unchanged'";
