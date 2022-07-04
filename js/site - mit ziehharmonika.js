@@ -134,8 +134,8 @@ function run() {
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
     // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
-    xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
-    // xhr = d3.xml("js/example.xml" //To load example xml: Hide line above and unhide this line
+    // xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
+    xhr = d3.xml("js/example.xml" //To load example xml: Hide line above and unhide this line
     ).on("error", function (error) {
         loadingAnimation.classList.add("hide");//hide loading spinner
         message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
@@ -245,9 +245,9 @@ function run() {
                 const tableHtml = createTable(e.layer.feature.properties.id)
                 let mapContainer = document.querySelector(".map-container");
 
-                let tagComparisonPopup = L.popup({
-                    maxWidth: mapContainer.clientWidth - 45,
-                    maxHeight: mapContainer.clientHeight - 40
+                L.popup({
+                    maxWidth: mapContainer.clientWidth - 45 || "auto",//make sure that the popup is smaller than the map container
+                    maxHeight: mapContainer.clientHeight - 40,
                 })
                     .setLatLng(e.latlng)
                     .setContent(tableHtml)
@@ -321,25 +321,25 @@ function run() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="metatags">
-                                    <td>version</td>
-                                    <td>${node[0].getAttribute("version")}</td>
+                                <tr class="active">
+                                    <td><div>version</div></td>
+                                    <td><div>${node[0].getAttribute("version")}</div></td>
                                 </tr>
-                                <tr class="metatags">
-                                    <td>timestamp</td>
-                                    <td>${node[0].getAttribute("timestamp")}</td>
+                                <tr class="active">
+                                    <td><div>timestamp</td>
+                                    <td><div>${node[0].getAttribute("timestamp")}</div></td>
                                 </tr>
-                                <tr class="metatags">
-                                    <td>user</td>
-                                    <td>${node[0].getAttribute("user")}</td>
+                                <tr class="active">
+                                    <td><div>user</td>
+                                    <td><div>${node[0].getAttribute("user")}</div></td>
                                 </tr>
                         `;
 
                         for (let i = 0; i < keysNew.length; i++) {
                             tableHtml += `
-                                <tr class="green">
-                                    <td>${keysNew[i].getAttribute('k')}</td>
-                                    <td>${keysNew[i].getAttribute('v')}</td>
+                                <tr class="green active">
+                                    <td><div>${keysNew[i].getAttribute('k')}</div></td>
+                                    <td><div>${keysNew[i].getAttribute('v')}</div></td>
                                 </tr>
                                 `
                         }
@@ -384,20 +384,20 @@ function run() {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr class="metatags">
+                                <tr class="active">
                                     <td><div>version</div></td>
-                                    <td>${keyvalues.old.meta["version"]}</td>
-                                    <td>${keyvalues.new.meta["version"]}</td>
+                                    <td><div>${keyvalues.old.meta["version"]}</div></td>
+                                    <td><div>${keyvalues.new.meta["version"]}</div></td>
                                 </tr>
-                                <tr class="metatags">
-                                    <td>timestamp</td>
-                                    <td>${keyvalues.old.meta["timestamp"]}</td>
-                                    <td>${keyvalues.new.meta["timestamp"]}</td>
+                                <tr class="active">
+                                    <td><div>timestamp</td>
+                                    <td><div>${keyvalues.old.meta["timestamp"]}</div></td>
+                                    <td><div>${keyvalues.new.meta["timestamp"]}</div></td>
                                 </tr>
-                                <tr class="metatags">
+                                <tr class="active">
                                     <td><div>user</td>
-                                    <td>${keyvalues.old.meta["user"]}</td>
-                                    <td>${keyvalues.new.meta["user"]}</td>
+                                    <td><div>${keyvalues.old.meta["user"]}</div></td>
+                                    <td><div>${keyvalues.new.meta["user"]}</div></td>
                                 </tr>
                             `;
 
@@ -408,19 +408,19 @@ function run() {
                             let cssClass;
                             //Case 1: Tag deleted in new --> Background color red, change from "undefined" to ""
                             if (!newTag) {
-                                cssClass = "red";
+                                cssClass = "'red active'";
                                 newTag = "";
                             }
                             //Case 2: Tag created in new --> Background color green, change from "undefined" to ""
                             else if (!oldTag) {
-                                cssClass = "green";
+                                cssClass = "'green active'";
                                 oldTag = "";
                             }
                             //Case 3: Tag different in new --> Background color yellow
-                            else if (oldTag !== newTag) cssClass = "yellow";
+                            else if (oldTag !== newTag) cssClass = "'yellow active'";
 
                             //Case 4: Tags similar --> Don't display this key-value pair
-                            else cssClass = "'unchanged'";
+                            else cssClass = "'unchanged active hide'";
                             // else continue;
                             // Better option: Add a class "unchanged", hide them and add a button to show similar tags
                             // Table height needs to update see https://leafletjs.com/reference.html#divoverlay-contentupdate
@@ -428,9 +428,9 @@ function run() {
 
                             tableHtml += `
                                 <tr ${(cssClass ? 'class=' + cssClass : '')}>
-                                    <td>${uniqueKeysArr[i]}</td>
-                                    <td>${oldTag}</td>
-                                    <td>${newTag}</td>
+                                    <td><div>${uniqueKeysArr[i]}</div></td>
+                                    <td><div>${oldTag}</div></td>
+                                    <td><div>${newTag}</div></td>
                                 </tr>
                                 `
                         }
@@ -440,16 +440,13 @@ function run() {
                             </tbody>
                         </table>
                     `;
-                    // document.querySelector("#tags-comparison").innerHTML = tableHtml;
 
-                    tableHtml += `<div>xxx unchanged tags (Show)</div>`;
                     //Create link to edit geometry in iD editor
                     tableHtml += `<a href="https://www.openstreetmap.org/edit?${node[0].nodeName}=${node[0].getAttribute("id")}" target="_blank" rel="noopener noreferrer">Edit</a> in iD`;
                     // document.querySelector("#edit-geometry").innerHTML = editGeometry;
 
                     //button to toggle display of identical tags
                     tableHtml += `<button class="toggle-unchanged" onclick="toggleEmptyRows()">Toggle</button>`
-
                     return tableHtml;
                 }
             }
@@ -597,10 +594,9 @@ function run() {
 function toggleEmptyRows() {
     const unchangedRows = document.querySelectorAll(".unchanged")
     for (let i = 0; i < unchangedRows.length; i++) {
-        unchangedRows[i].classList.toggle('hide');
+       unchangedRows[i].classList.toggle('hide');
     }
-    // document.querySelector(".leaflet-popup-content").style.width="auto";
-}
+  }
 
 //Show a modal with a message
 function message(type, text) {

@@ -389,3 +389,59 @@ h2 select {
 /* table {
   word-break: break-word;
 } */
+table {
+  border-collapse: collapse;
+}
+
+td {
+  padding: 0 3px;
+}
+
+tr {
+  border-bottom: 1px solid black;
+}
+
+.green {
+  background-color: #b9ffb9;
+}
+
+.red {
+  background-color: #ff9494;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.capitalize {
+  display: inline-block;
+}
+
+.capitalize::first-letter {
+  text-transform: capitalize;
+}
+
+.metatags {
+  background-color: #e5e5e5;
+}
+
+/* table {
+  border-collapse: collapse;
+}
+tr {
+  background: #eee;
+  border-bottom: 1px solid #fff;
+}
+tr, td {
+  padding: 0;
+}
+tr td div {
+  max-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: max-height 0.3s, padding 0.3s;
+}
+tr.active td div {
+  max-height: 100px;
+  transition: max-height 0.6s, padding 0.6s;
+} */
