@@ -134,10 +134,9 @@ function run() {
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
     // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
-    xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
-        // xhr = d3.xml("js/example.xml" //For example xml: Hide line above and unhide this line
+    // xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
+    xhr = d3.xml("js/example.xml" //To load example xml: Hide line above and unhide this line
     ).on("error", function (error) {
-        console.log(error);
         loadingAnimation.classList.add("hide");//hide loading spinner
         message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
     })
@@ -151,12 +150,12 @@ function run() {
                 var element = elements[i];
                 switch (element.getAttribute('type')) {
                     case 'create':
-                        newData.documentElement.appendChild(element.querySelector("*").cloneNode());//cloneNode needed to keep a copy of the node in "data"
+                        newData.documentElement.appendChild(element.querySelector("*").cloneNode(true));//cloneNode needed to keep "data" unchanged
                         break;
                     case 'modify':
                     case 'delete':
-                        var newElement = element.querySelector('new > *');
-                        var oldElement = element.querySelector('old > *');
+                        var newElement = element.querySelector('new > *').cloneNode(true);//cloneNode needed to keep "data" unchanged
+                        var oldElement = element.querySelector('old > *').cloneNode(true);
                         // fake changeset id on new data
                         var newestTs = +new Date(newElement.getAttribute("timestamp"));
                         if (newElement.tagName == 'way') {
@@ -181,8 +180,8 @@ function run() {
                         oldElement.setAttribute('uid', newElement.getAttribute('uid'));
                         oldElement.setAttribute('timestamp', newElement.getAttribute('timestamp'));
                         if (element.getAttribute('type') == 'modify')
-                            newData.documentElement.appendChild(newElement.cloneNode());//cloneNode needed to keep a copy of the node in "data"
-                        oldData.documentElement.appendChild(oldElement.cloneNode());
+                            newData.documentElement.appendChild(newElement);
+                        oldData.documentElement.appendChild(oldElement);
                 }
             }
 
@@ -353,7 +352,7 @@ function run() {
                         //Start with old
                         //Copy meta tags
                         keyvalues.old.meta["version"] = node[0].getAttribute("version");
-                        keyvalues.old.meta["timestamp"] = node[0].getAttribute("timestamp");
+                        keyvalues.old.meta["timestamp"] = moment(node[0].getAttribute("timestamp")).fromNow();
                         keyvalues.old.meta["user"] = node[0].getAttribute("user");
                         const keysOld = node[0].querySelectorAll("tag");
                         for (let i = 0; i < keysOld.length; i++) {
@@ -363,7 +362,7 @@ function run() {
                         //Continue with new
                         //Copy meta tags
                         keyvalues.new.meta["version"] = node[1].getAttribute("version");
-                        keyvalues.new.meta["timestamp"] = node[1].getAttribute("timestamp");
+                        keyvalues.new.meta["timestamp"] = moment(node[1].getAttribute("timestamp")).fromNow();
                         keyvalues.new.meta["user"] = node[1].getAttribute("user");
                         const keysNew = node[1].querySelectorAll("tag");
                         for (let i = 0; i < keysNew.length; i++) {
