@@ -264,6 +264,12 @@ h2, p {
     cursor: default;
   }
 
+  .result .text-bubble .text-bubble-svg {
+    width: 16px;
+    height: 14px;
+    margin-right: 2px;
+  }
+
 .changeset {
   /* padding: 0px 0px 5px 20px; */
   height: 35px;

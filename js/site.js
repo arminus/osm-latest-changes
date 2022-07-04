@@ -134,9 +134,10 @@ function run() {
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
     // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
-    // xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
-    xhr = d3.xml("js/example.xml" //For example xml: Hide line above and unhide this line
+    xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
+        // xhr = d3.xml("js/example.xml" //For example xml: Hide line above and unhide this line
     ).on("error", function (error) {
+        console.log(error);
         loadingAnimation.classList.add("hide");//hide loading spinner
         message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
     })
@@ -568,8 +569,12 @@ function run() {
                 });
                 rl.select('span.text-bubble').each(function (d) {
                     if (changesets[d.id].discussionCount > 0) {
-                        d3.select(this).html('&#128489; ');//Speech bubble glyphicon
+                        // d3.select(this).html('&#128489; ');//Speech bubble glyphicon (doesn't work on Android)
                         d3.select(this).attr('title', 'Changeset has comments');
+                        d3.select(this).append('svg')
+                            .classed('text-bubble-svg', true)
+                            .append('use')
+                            .attr('href', 'img/icons.svg#speech-bubble');
                     }
                 });
                 rl.select('div.changeset').each(function (d) {
