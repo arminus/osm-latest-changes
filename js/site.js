@@ -134,8 +134,8 @@ function run() {
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
     // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
-    // xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
-    xhr = d3.xml("js/example.xml" //To load example xml: Hide line above and unhide this line
+    xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
+    // xhr = d3.xml("js/example.xml" //To load example xml: Hide line above and unhide this line
     ).on("error", function (error) {
         loadingAnimation.classList.add("hide");//hide loading spinner
         message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
