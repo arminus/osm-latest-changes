@@ -11,3 +11,7 @@ This is based on an earlier prototype by [@lxbarth](https://github.com/lxbarth),
 ## Running
 
 Just `git clone` and [boot up a quick development server](https://gist.github.com/tmcw/4989751).
+
+![Picture of App][screenshot]
+
+[screenshot]: img/multi-devices.png "Picture of the App"
