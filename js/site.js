@@ -134,8 +134,8 @@ function run() {
     var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
     // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
-    // xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
-    xhr = d3.xml("js/example.xml" //To load example xml: Hide line above and unhide this line
+    xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
+    // xhr = d3.xml("js/example.xml" //To load example xml: Hide line above and unhide this line
     ).on("error", function (error) {
         loadingAnimation.classList.add("hide");//hide loading spinner
         message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
@@ -236,18 +236,23 @@ function run() {
             }
 
             layer.on('click', function (e) {
-                //Scroll selected element into view in sidebar
+                //Highlight clicked layer on map and in sidebar
                 click({ feature: e.layer });
-                document.querySelector('.active').scrollIntoView({
-                    behavior: 'smooth'
-                });
+                //Scroll selected element into view in sidebar
+                //(Only on large screens. On small screens the map scrolls out of view, which is annoying)
+                if (screen.width > 600) {
+                    document.querySelector('.active').scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
 
                 const tableHtml = createTable(e.layer.feature.properties.id)
                 let mapContainer = document.querySelector(".map-container");
 
                 let tagComparisonPopup = L.popup({
                     maxWidth: mapContainer.clientWidth - 45,
-                    maxHeight: mapContainer.clientHeight - 40
+                    maxHeight: mapContainer.clientHeight - 40,
+                    className: "stylePopup"
                 })
                     .setLatLng(e.latlng)
                     .setContent(tableHtml)
@@ -440,20 +445,15 @@ function run() {
                             </tbody>
                         </table>
                     `;
-                    // document.querySelector("#tags-comparison").innerHTML = tableHtml;
 
-                    tableHtml += `<div>xxx unchanged tags (Show)</div>`;
                     //Create link to edit geometry in iD editor
-                    tableHtml += `<a href="https://www.openstreetmap.org/edit?${node[0].nodeName}=${node[0].getAttribute("id")}" target="_blank" rel="noopener noreferrer">Edit</a> in iD`;
-                    // document.querySelector("#edit-geometry").innerHTML = editGeometry;
-
-                    //button to toggle display of identical tags
-                    tableHtml += `<button class="toggle-unchanged" onclick="toggleEmptyRows()">Toggle</button>`
+                    tableHtml += `<a href="https://www.openstreetmap.org/edit?${node[0].nodeName}=${node[0].getAttribute("id")}" target="_blank" rel="noopener noreferrer">Edit in iD</a>`;
 
                     return tableHtml;
                 }
             }
 
+            //Highlight clicked layer on map and in sidebar
             function click(d) {
                 results
                     .selectAll('div.result')
@@ -591,15 +591,6 @@ function run() {
                 });
             });
         }).get();
-}
-
-//button to toggle display of identical tags
-function toggleEmptyRows() {
-    const unchangedRows = document.querySelectorAll(".unchanged")
-    for (let i = 0; i < unchangedRows.length; i++) {
-        unchangedRows[i].classList.toggle('hide');
-    }
-    // document.querySelector(".leaflet-popup-content").style.width="auto";
 }
 
 //Show a modal with a message

@@ -386,19 +386,38 @@ h2 select {
   }
 }
 
-/* table {
-  word-break: break-word;
+/* .leaflet-popup {
+  opacity: 0.9 !important;
 } */
+
+.stylePopup .leaflet-popup-content-wrapper {
+  opacity: 0.9
+}
+
 table {
   border-collapse: collapse;
+}
+
+tr {
+  border-bottom: 1px solid black;
 }
 
 td {
   padding: 0 3px;
 }
 
-tr {
-  border-bottom: 1px solid black;
+td:first-child {
+  border-right: 1px solid black;
+}
+
+/* Truncate text in table on small screens */
+@media (max-width: 600px){
+  td {
+   max-width: 100px;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   white-space: nowrap;
+  }
 }
 
 .create {
@@ -410,7 +429,7 @@ tr {
 }
 
 .modify {
-  background-color: yellow;
+  background-color: #ffffae;
 }
 
 .capitalize {
