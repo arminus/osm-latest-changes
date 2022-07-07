@@ -37,7 +37,7 @@ window.addEventListener("resize", () => {
     else map.gestureHandling.disable();
 });
 
-//add "set current location" button to map
+//Add "set current location" button to map
 L.control.locate({
     initialZoomLevel: 14,
     strings: {
@@ -45,8 +45,8 @@ L.control.locate({
     }
 }).addTo(map);
 
-let sidebar = document.querySelector(".changesets");
 //Toggle sidebar button on map
+let sidebar = document.querySelector(".changesets");
 L.Control.toggleSidebarButton = L.Control.extend(
     {
         options:
@@ -118,7 +118,7 @@ if (resolution_from_local_storage) {
     days_to_show = 7;
 }
 
-var layer = null;
+//Map attribution
 map.attributionControl.setPrefix('');
 L.hash(map);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -126,6 +126,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: "<a target='_blank' href='https://www.openstreetmap.org/copyright' style='background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAB11BMVEXZ2dlkZGT///////////8mJibIyMj5+fm6urr///8sLCywsLBJSUn///9eXl7////////j4+P////////Q0ND////u7u7i4uIfHx/s7OxmZmZzc3P39/fw8PDg4OD5+fmNjY1cXFz5+flQUFBGRkaIiIhtbW3///////9hYWHS0tKlpaWsrKzZ2dmgoKCpqalycnLg4OCCgoJLS0tEREQlJSX9/f3///8/Pz/e3t4jIyP///////////+/v7+Ghobp6enDw8Pl5eVXV1f////////U1NT////////////////l5eW1tbX///+4uLj////////////////////////////w8PDNzc3GxsYuLi7w8PD///////9paWmvr6/c3NwhISHe3t5UVFQfHx/y8vLn5+d3d3eXl5f////09PTs7Oz///8zMzN8fHz///+UlJT////////u7u44ODj////p6en///86Ojqurq5ZWVlfX1////////8hISFBQUGioqIlJSXV1dV6enoqKioxMTH39/eLi4s4ODj///9ra2ubm5v9/f3Nzc28vLz///9LS0v///////////+FhYUdHR3////X19cjIyM2Njaenp7///8AAAAbGxtl93oXAAAAnXRSTlNzcE9udnpweG9Gem50TnI9Z3VgbHEWeHR9dnBvendzfG5ye3N0b3A4I3Fxbm5ybm5wdG5zdXt0NHVze14eMW9udW90cld4cUdSFx11bnJvHG1ANj8VQnlwcHl4H1xwb3N8dHN8eXZvbnV5d0t4byluAyd3dwt2VnZucnEvCn11bnxyb3p4e252BHBufXFvYnRzZQxvfWpyfHdufQB9fOn/1AAAAY5JREFUKM+V0mVvwzAQBuCMmZmZmZmZmZmZGcpMa7ukWXK5H7ukVbOpmqbt/WDZfiRLdz6C+8oqAPh6+8BqnANaOI74RoASydLisnzRdiGt9yQa9pVglC7LYws8advLTxEWoJaGx1x6ksx/LdQetI5R55xIE4O2+yvhwZDgwxUaobDh1kn6F/ud9vSMBu3p5lLgycqGAZosjneCe52zLTyjEB17DRAdERkva0Rk34h3x+gNinmy7FqyKOcWiDcWfw4QgL+TXC2sH8yOJ9V1AXRaUZmdkZqCALX4APDhotKjbcZ8LDkyoiyBp3I0ipRWgVgDORu768mJCFt3uEe4SXPA1wRFqgPatEVBJpyZSDcpFBR2mKzFubgGN5BfpjEb3GTVdJtNRqrq+DE9aQcMJFSKhIyW7UFsri7JUyHJqMhNhqT+UPL/iO+8ix4e5y1P38A6zv+X0Pln89jU7LT9mtU575mLkcmZV47/r/Y9+4temIKhARutVO/3H54Mc87ZuG1rFQfn8uq+r/dc7zp8AmmAXy4xp9xiAAAAAElFTkSuQmCC) no-repeat; background-size:26px 26px;width:24px;height:24px;display:block;z-index:1000;bottom:2px;right:5px;bottom:5px;position:absolute;'></a>"
 }).addTo(map);
 
+//Update map on zoom or pan, if zoom level greater than 11
+var layer = null;
 function updateMap() {
     if (map.getZoom() > 11) {
         d3.select('#map').classed('faded', true);
@@ -141,6 +143,7 @@ function updateMap() {
     localStorage.setItem('location-hash', location.hash);
 }
 
+//Download OSM changeset data from overpass
 var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
 let loadingAnimation = document.querySelector("#loading-animation");
 let xhr;
@@ -160,7 +163,7 @@ function run() {
     // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
     xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
-        // xhr = d3.xml("./examples/example.xml" //To load example xml: Hide line above and unhide this line
+    // xhr = d3.xml("./examples/example.xml" //To load example xml: Comment out line above and uncomment this line
     ).on("error", function (error) {
         loadingAnimation.classList.add("hide");//hide loading spinner
         message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
@@ -652,6 +655,7 @@ function message(type, text) {
     infobox.classList.add("show", type);
 }
 
+//Abort download of changesets. Empty the changesets list.
 function abort() {
     if (xhr) {
         xhr.abort();
@@ -665,6 +669,7 @@ function abort() {
         .exit().remove();
 }
 
+//Update map after paning or zooming
 let timeOutId = 0;
 map.on('dragend	', function (event) {
     if (event.distance < 12) return;
@@ -678,6 +683,7 @@ map.on('zoomend', function () {
     timeOutId = setTimeout(updateMap, 500);
 });
 
+//Update map after change in time range selector
 d3.select('#resolution')
     .attr('title', 'Select a time range')
     .on('change', function () {
