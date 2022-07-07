@@ -1,6 +1,20 @@
 var map = L.map('map', {
-    gestureHandling: activateGestureHandling()
+    gestureHandling: activateGestureHandling(),
+    contextmenu: true,
+    contextmenuWidth: 150,
+    contextmenuItems: [{
+        text: 'Open with OSM',
+        icon: 'img/osm-logo.png',
+        callback: openOSM
+    },
+    {
+        text: 'Open with GMaps',
+        icon: 'img/gmaps-logo.png',
+        callback: openGmaps
+    }]
 });
+
+//Set map view either from hash value in URL (prio 1) or coords from local storage (prio 2)
 var hash_from_local_storage = localStorage.getItem('location-hash');
 if (location.hash || hash_from_local_storage) {
     var h = (location.hash || hash_from_local_storage).substr(1).split('/');
@@ -80,8 +94,18 @@ document.addEventListener("keyup", event => {
     };
 });
 
-var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
+//Open link to external maps when "RMB --> Open with..."
+function openOSM(e) {
+    const url = `https://www.openstreetmap.org/?mlat=${e.latlng.lat}&mlon=${e.latlng.lng}#map=19/${e.latlng.lat}/${e.latlng.lng}`;
+    window.open(url, '_blank').focus();
+}
 
+function openGmaps(e) {
+    const url = `https://maps.google.com/maps?q=loc:${e.latlng.lat},${e.latlng.lng}`;
+    window.open(url, '_blank').focus();
+}
+
+//Timeframe
 var days_to_show;
 // load resolution_from_local_storage from local storage, if available
 var resolution_from_local_storage = localStorage.getItem("resolution");
@@ -117,6 +141,7 @@ function updateMap() {
     localStorage.setItem('location-hash', location.hash);
 }
 
+var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
 let loadingAnimation = document.querySelector("#loading-animation");
 let xhr;
 updateMap();
@@ -135,7 +160,7 @@ function run() {
     // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
     xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
-    // xhr = d3.xml("./examples/example.xml" //To load example xml: Hide line above and unhide this line
+        // xhr = d3.xml("./examples/example.xml" //To load example xml: Hide line above and unhide this line
     ).on("error", function (error) {
         loadingAnimation.classList.add("hide");//hide loading spinner
         message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
@@ -559,15 +584,16 @@ function run() {
                     return moment(d.time).fromNow();
                 });
 
-            //link to achavi
-            rl.append('span').text(' ');
-            rl.append('a').attr('class', 'reveal').text('«achavi»')
-                .attr('target', '_blank')
-                .attr('title', 'Get details about this changeset on Achavi')
-                .attr('href', function (d) {
-                    return 'https://overpass-api.de/achavi/?changeset=' + d.id;
-                });
+            //link to achavi (temporarily hidden. To be discussed, if needed or not)
+            // rl.append('span').text(' ');
+            // rl.append('a').attr('class', 'reveal').text('«achavi»')
+            //     .attr('target', '_blank')
+            //     .attr('title', 'Get details about this changeset on Achavi')
+            //     .attr('href', function (d) {
+            //         return 'https://overpass-api.de/achavi/?changeset=' + d.id;
+            //     });
 
+            //Changeset information
             rl.append('div').attr('class', 'changeset');
             var queue = d3.queue();
             var changesetIds = rl.data()
