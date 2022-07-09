@@ -428,7 +428,7 @@ function run() {
                                 </thead>
                                 <tbody>
                                 <tr class="metatags">
-                                    <td><div>version</div></td>
+                                    <td>version</td>
                                     <td>${keyvalues.old.meta["version"]}</td>
                                     <td>${keyvalues.new.meta["version"]}</td>
                                 </tr>
