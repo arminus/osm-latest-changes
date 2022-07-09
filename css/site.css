@@ -12,7 +12,7 @@ body {
   /* max-width: 100%; */
 }
 
-@media (max-width: 600px){
+@media (max-width: 600px) {
   .container {
     flex-direction: column;
   }
@@ -21,13 +21,14 @@ body {
 a,
 a:hover,
 a:visited {
-  text-decoration:underline;
-  color:inherit;
+  text-decoration: underline;
+  color: inherit;
 }
 
 .hide {
   display: none;
 }
+
 /* #endregion */
 
 /* #region CSS RELATED TO INFO/WARNING MODAL */
@@ -38,26 +39,35 @@ a:visited {
   top: -100px;
   left: 0;
   right: 0;
-  margin: 5px 30px 0px;/* top / left,right / bottom */
+  margin: 5px 30px 0px;
+  /* top / left,right / bottom */
   padding: 5px 20px;
   border-radius: 10px;
   color: white;
   cursor: Default;
-  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   z-index: 1001;
 }
 
 .show {
   animation-name: animateShowHide;
-  animation-duration: 2s;
+  animation-duration: 4s;
   animation-iteration-count: 2;
   animation-direction: alternate;
 }
 
 @keyframes animateShowHide {
-  0%   {top: -100px;}
-  30%   {top: 0px;}
-  100%  {top: 0px;}
+  0% {
+    top: -100px;
+  }
+
+  30% {
+    top: 0px;
+  }
+
+  100% {
+    top: 0px;
+  }
 }
 
 .alarm {
@@ -67,6 +77,7 @@ a:visited {
 .success {
   background-color: green;
 }
+
 /* #endregion */
 
 /* #region CSS RELATED TO CHANGESETS COLUMN */
@@ -83,7 +94,7 @@ a:visited {
 }
 
 /* Center the heading on small screens */
-@media (max-width: 600px){
+@media (max-width: 600px) {
   .heading {
     margin: 0px auto;
   }
@@ -98,7 +109,7 @@ a:visited {
   margin: 0;
 }
 
-.heading img {
+#clock {
   width: 60px;
   height: 60px;
 }
@@ -124,11 +135,39 @@ a:visited {
   cursor: pointer;
 }
 
+.circular-arrow {
+  width: 16px;
+  height: 16px;
+}
+
+#download-changesets-button {
+  display: block;
+  width: 270px;
+  padding: 10px 50px;
+  margin: 5px auto;
+  font-size: 20px;
+  color: #f3f0f0;
+  background-color: #72befb;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#download-changesets-button:hover {
+  background-color: #008dff;
+}
+
+#download-changesets-button:disabled {
+  cursor: not-allowed;
+  opacity: .3;
+}
+
 /* Make sure that sidebar is shown on small screens and hide the "toggle sidebar"-icon */
-@media (max-width: 600px){
+@media (max-width: 600px) {
   .changesets {
     display: block;
   }
+
   /* Hide toggle sidebar icon on small screens*/
   .leaflet-control-toggle {
     display: none;
@@ -140,7 +179,7 @@ a:visited {
 }
 
 .result {
-    border-bottom:1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
 
 .result {
@@ -148,164 +187,196 @@ a:visited {
   transition: background-color .2s ease-in-out;
   -moz-transition: background-color .2s ease-in-out;
   -webkit-transition: background-color .2s ease-in-out;
-  }
-  .result.active,
-  .result:hover {
-    background-color: #f5f5f5;
-  }
-  .result.active {
-    color: #008dff !important;
-  }
-  .result .date {
-    padding-left: 5px;
-    text-decoration: underline dotted;
-    cursor: help;
-    }
+}
 
-  .result .zoom {
-    float: left;
-    display: flex;
-    align-items: center;
-    height: 30px;
-    width: 30px;
-    padding: 5px;
-    border-radius: 50%;
-    margin-right: 5px;
-    margin-top: 5px;
-    background-color: #e5e5e5;
-    stroke: #777;
-    box-shadow: 0 2px 4px darkslategrey;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-  
-  .result .zoom:active {
-    box-shadow: 0 0 2px darkslategray;
-    transform: translateY(2px);
-  }
-  
-  .result .zoom:hover {
-    background-color: #eee;
-  }
+.result.active,
+.result:hover {
+  background-color: #f5f5f5;
+}
 
-  .loupe {
-    width: 20px;
-    height: 20px;
-    margin-left: 6px;
-  }
+.result.active {
+  color: #008dff !important;
+}
 
-  .result .text-bubble {
-    cursor: default;
-  }
+.result .date {
+  padding-left: 8px;
+  text-decoration: underline dotted;
+  cursor: help;
+}
 
-  .result .text-bubble .text-bubble-svg {
-    width: 16px;
-    height: 14px;
-    margin-right: 2px;
-  }
+.result .zoom {
+  float: left;
+  display: flex;
+  align-items: center;
+  height: 30px;
+  width: 30px;
+  padding: 5px;
+  border-radius: 50%;
+  margin-right: 5px;
+  margin-top: 5px;
+  background-color: #e5e5e5;
+  stroke: #777;
+  box-shadow: 0 2px 4px darkslategrey;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.result .zoom:active {
+  box-shadow: 0 0 2px darkslategray;
+  transform: translateY(2px);
+}
+
+.result .zoom:hover {
+  background-color: #eee;
+}
+
+.loupe {
+  width: 20px;
+  height: 20px;
+  margin-left: 6px;
+}
+
+.result .text-bubble {
+  cursor: default;
+}
+
+.result .text-bubble .text-bubble-svg {
+  width: 16px;
+  height: 14px;
+  margin-right: 2px;
+}
 
 .changeset {
   /* padding: 0px 0px 5px 20px; */
   height: 35px;
   overflow: hidden;
-  }
-  .changeset a { text-decoration: none;}
-  .changeset a.comment:first-letter { text-transform: capitalize; }
-  .result.active .changeset,
-  .result:hover .changeset { height: auto; min-height: 35px;}
-  .changeset:first-line { font-weight: bold; font-size: 18px; }
+}
 
-.reveal { visibility: hidden; }
-  a.reveal { text-decoration: none; opacity: 0.6; }
-  a.reveal:hover { text-decoration: underline; opacity: 1; }
-  .result.active .reveal,
-  .result:hover .reveal { visibility: visible; }
+.changeset a {
+  text-decoration: none;
+}
 
-  h2 select {
-    width: auto;
-    height: auto;
-    border: 0;
-    background: transparent;
-    color: black;
-    font-weight: bold;
-    font-size: 28px;
-    padding: 0;
-    margin: 0;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    vertical-align: baseline;
-  }
-  
+.changeset a.comment:first-letter {
+  text-transform: capitalize;
+}
+
+.result.active .changeset,
+.result:hover .changeset {
+  height: auto;
+  min-height: 35px;
+}
+
+.changeset:first-line {
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.reveal {
+  visibility: hidden;
+}
+
+a.reveal {
+  text-decoration: none;
+  opacity: 0.6;
+}
+
+a.reveal:hover {
+  text-decoration: underline;
+  opacity: 1;
+}
+
+.result.active .reveal,
+.result:hover .reveal {
+  visibility: visible;
+}
+
+h2 select {
+  width: auto;
+  height: auto;
+  border: 0;
+  background: transparent;
+  color: black;
+  font-weight: bold;
+  font-size: 28px;
+  padding: 0;
+  margin: 0;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  vertical-align: baseline;
+}
+
+.col {
+  flex: 0 1 310px;
+  overflow: auto;
+  height: 100vh;
+}
+
+@media (max-width: 600px) {
   .col {
-    flex: 0 1 310px;
-    overflow: auto;
-    height: 100vh;
+    flex: 1 1 auto;
+    height: 50vh;
   }
-  @media (max-width: 600px){
-    .col {
-      flex: 1 1 auto;
-      height: 50vh;
-    }
-  }
-  
-  
-  /* Custom scroll bar
+}
+
+
+/* Custom scroll bar
   ------------------------------------------------------- */
-  /* Designing for scroll-bar */ 
-  ::-webkit-scrollbar { 
-      width: 6px; 
-  } 
-  
-  /*Increase size of scroll bar on hover*/
-  *:hover::-webkit-scrollbar {
-    width: auto;
-    /* height: 10px; */
-  }
-  
-  /* Track */ 
-  ::-webkit-scrollbar-track { 
-      background: gainsboro; 
-      border-radius: 5px; 
-  } 
-  
-  /* Handle */ 
-  ::-webkit-scrollbar-thumb { 
-      background: black; 
-      border-radius: 5px; 
-  } 
-  
-  /* Handle on hover */ 
-  ::-webkit-scrollbar-thumb:hover { 
-      background: #555; 
-  }
-  
-  /* Back to top button */
+/* Designing for scroll-bar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/*Increase size of scroll bar on hover*/
+*:hover::-webkit-scrollbar {
+  width: auto;
+  /* height: 10px; */
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: gainsboro;
+  border-radius: 5px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: black;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Back to top button */
+.to-top {
+  cursor: pointer;
+  position: absolute;
+  background: #008dff;
+  color: white;
+  opacity: 0.8;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  left: 250px;
+  bottom: 14px;
+  transition: background 0.5s;
+}
+
+.to-top:hover {
+  color: #008dff;
+  background: white;
+}
+
+/* Position "Back to top" button differently on small screens */
+@media (max-width: 600px) {
   .to-top {
-    cursor: pointer;
-    position: absolute;
-    background: #008dff;
-    color: white;
-    opacity: 0.8;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    left: 250px;
-    bottom: 14px;
-    transition: background 0.5s;
+    left: auto;
+    bottom: calc(50% + 15px);
+    right: 25px;
   }
-  
-  .to-top:hover {
-    color: #008dff;
-    background: white;
-  }
-  
-  /* Position "Back to top" button differently on small screens */
-  @media (max-width: 600px){
-    .to-top {
-      left: auto;
-      bottom: calc(50% + 15px);
-      right: 25px;
-    }
-  }
+}
+
 /* #endregion */
 
 /* #region CSS RELATED TO LEAFLET MAP LAYOUT */
@@ -324,6 +395,7 @@ a:visited {
   -moz-transition: opacity .5s ease-in-out;
   -webkit-transition: opacity .5s ease-in-out;
 }
+
 #map.faded {
   opacity: .5;
 }
@@ -354,14 +426,20 @@ a:visited {
   border-top: 16px solid #2074B6;
   width: 50px;
   height: 50px;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
+  -webkit-animation: spin 2s linear infinite;
+  /* Safari */
   animation: spin 2s linear infinite;
   z-index: 444;
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Toggle sidebar icon */
@@ -401,12 +479,12 @@ td:first-child {
 }
 
 /* Truncate text in table on small screens */
-@media (max-width: 600px){
+@media (max-width: 600px) {
   td {
-   max-width: 100px;
-   overflow: hidden;
-   text-overflow: ellipsis;
-   white-space: nowrap;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
@@ -433,4 +511,5 @@ td:first-child {
 .metatags {
   background-color: #e5e5e5;
 }
+
 /* #endregion */

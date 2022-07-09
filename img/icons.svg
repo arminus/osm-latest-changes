@@ -1,11 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg">
+<!-- Speech bubble -->
+<symbol id="speech-bubble" height="16px" version="1.1" viewBox="0 0 16 16" width="16px" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" xmlns:xlink="http://www.w3.org/1999/xlink"><g fill="currentColor" fill-rule="evenodd" id="Icons with numbers" stroke="none" stroke-width="1"><g fill="currentColor" id="Group" transform="translate(-720.000000, -192.000000)"><path d="M728,205 C727.092687,205 726.225692,204.86437 725.430064,204.617506 C724.617765,205.250987 723.248775,206.131104 721.912598,206.131104 C722.612692,205.468456 722.810743,204.184192 722.854217,203.228743 C721.703165,202.248586 721,200.938813 721,199.5 C721,196.462434 724.134007,194 728,194 C731.865993,194 735,196.462434 735,199.5 C735,202.537566 731.865993,205 728,205 Z M728,205" id="Oval 247"/></g></g></symbol>
+
+<!-- Circular Arrow -->
+<symbol id="circular-arrow" xmlns="http://www.w3.org/2000/svg" width="16px" height="16px" viewBox="0 0 1024 1024">>
+  <path fill="currentColor" d="m970.615 20.137-132.6 125.351C749.39 68.275 635.473 25.326 517.19 25.326c-129.504 0-253.78 51.476-345.353 143.049-91.573 91.573-143.05 215.851-143.05 345.355 0 129.505 51.477 253.78 143.05 345.354 91.573 91.573 215.85 143.05 345.353 143.05 129.505 0 253.783-51.477 345.356-143.05 91.573-91.573 143.049-215.85 143.049-345.354 0-2.962-.167-5.905-.221-8.86l-149.94 2.33c.043 2.178.163 4.347.163 6.53a338.306 338.306 0 0 1-99.117 239.29 338.306 338.306 0 0 1-239.29 99.117A338.306 338.306 0 0 1 277.9 753.02a338.306 338.306 0 0 1-99.117-239.29A338.306 338.306 0 0 1 277.9 274.441a338.306 338.306 0 0 1 239.29-99.117 338.299 338.299 0 0 1 211.087 73.905l-118.943 112.44 158.125.07 158.127.07L948.1 190.973l22.515-170.836z"/>
+</symbol>
+
 <!-- Loupe -->
 <symbol xmlns="http://www.w3.org/2000/svg" id="loupe" viewBox="0 0 576 512">
 <path fill="none" stroke-width="36" stroke-linecap="round"
 d="m280,278a153,153 0 1,0-2,2l170,170m-91-117 110,110-26,26-110-110"/>
-</symbol>
-
-<!-- Speech bubble -->
-<symbol id="speech-bubble" height="16px" version="1.1" viewBox="0 0 16 16" width="16px" xmlns="http://www.w3.org/2000/svg" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns" xmlns:xlink="http://www.w3.org/1999/xlink"><g fill="currentColor" fill-rule="evenodd" id="Icons with numbers" stroke="none" stroke-width="1"><g fill="currentColor" id="Group" transform="translate(-720.000000, -192.000000)"><path d="M728,205 C727.092687,205 726.225692,204.86437 725.430064,204.617506 C724.617765,205.250987 723.248775,206.131104 721.912598,206.131104 C722.612692,205.468456 722.810743,204.184192 722.854217,203.228743 C721.703165,202.248586 721,200.938813 721,199.5 C721,196.462434 724.134007,194 728,194 C731.865993,194 735,196.462434 735,199.5 C735,202.537566 731.865993,205 728,205 Z M728,205" id="Oval 247"/></g></g></symbol>
 </symbol>
 </svg>

@@ -94,12 +94,12 @@ document.addEventListener("keyup", event => {
     };
 });
 
-//Open link to external maps when "RMB --> Open with..."
+//Open link to OSM when "RMB --> Open with..."
 function openOSM(e) {
     const url = `https://www.openstreetmap.org/?mlat=${e.latlng.lat}&mlon=${e.latlng.lng}#map=19/${e.latlng.lat}/${e.latlng.lng}`;
     window.open(url, '_blank').focus();
 }
-
+//Open link to Google Maps when "RMB --> Open with..."
 function openGmaps(e) {
     const url = `https://maps.google.com/maps?q=loc:${e.latlng.lat},${e.latlng.lng}`;
     window.open(url, '_blank').focus();
@@ -126,51 +126,74 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: "<a target='_blank' href='https://www.openstreetmap.org/copyright' style='background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAB11BMVEXZ2dlkZGT///////////8mJibIyMj5+fm6urr///8sLCywsLBJSUn///9eXl7////////j4+P////////Q0ND////u7u7i4uIfHx/s7OxmZmZzc3P39/fw8PDg4OD5+fmNjY1cXFz5+flQUFBGRkaIiIhtbW3///////9hYWHS0tKlpaWsrKzZ2dmgoKCpqalycnLg4OCCgoJLS0tEREQlJSX9/f3///8/Pz/e3t4jIyP///////////+/v7+Ghobp6enDw8Pl5eVXV1f////////U1NT////////////////l5eW1tbX///+4uLj////////////////////////////w8PDNzc3GxsYuLi7w8PD///////9paWmvr6/c3NwhISHe3t5UVFQfHx/y8vLn5+d3d3eXl5f////09PTs7Oz///8zMzN8fHz///+UlJT////////u7u44ODj////p6en///86Ojqurq5ZWVlfX1////////8hISFBQUGioqIlJSXV1dV6enoqKioxMTH39/eLi4s4ODj///9ra2ubm5v9/f3Nzc28vLz///9LS0v///////////+FhYUdHR3////X19cjIyM2Njaenp7///8AAAAbGxtl93oXAAAAnXRSTlNzcE9udnpweG9Gem50TnI9Z3VgbHEWeHR9dnBvendzfG5ye3N0b3A4I3Fxbm5ybm5wdG5zdXt0NHVze14eMW9udW90cld4cUdSFx11bnJvHG1ANj8VQnlwcHl4H1xwb3N8dHN8eXZvbnV5d0t4byluAyd3dwt2VnZucnEvCn11bnxyb3p4e252BHBufXFvYnRzZQxvfWpyfHdufQB9fOn/1AAAAY5JREFUKM+V0mVvwzAQBuCMmZmZmZmZmZmZGcpMa7ukWXK5H7ukVbOpmqbt/WDZfiRLdz6C+8oqAPh6+8BqnANaOI74RoASydLisnzRdiGt9yQa9pVglC7LYws8advLTxEWoJaGx1x6ksx/LdQetI5R55xIE4O2+yvhwZDgwxUaobDh1kn6F/ud9vSMBu3p5lLgycqGAZosjneCe52zLTyjEB17DRAdERkva0Rk34h3x+gNinmy7FqyKOcWiDcWfw4QgL+TXC2sH8yOJ9V1AXRaUZmdkZqCALX4APDhotKjbcZ8LDkyoiyBp3I0ipRWgVgDORu768mJCFt3uEe4SXPA1wRFqgPatEVBJpyZSDcpFBR2mKzFubgGN5BfpjEb3GTVdJtNRqrq+DE9aQcMJFSKhIyW7UFsri7JUyHJqMhNhqT+UPL/iO+8ix4e5y1P38A6zv+X0Pln89jU7LT9mtU575mLkcmZV47/r/Y9+4temIKhARutVO/3H54Mc87ZuG1rFQfn8uq+r/dc7zp8AmmAXy4xp9xiAAAAAElFTkSuQmCC) no-repeat; background-size:26px 26px;width:24px;height:24px;display:block;z-index:1000;bottom:2px;right:5px;bottom:5px;position:absolute;'></a>"
 }).addTo(map);
 
-//Update map on zoom or pan, if zoom level greater than 11
-var layer = null;
+//Update map display on zoom and page load
 function updateMap() {
-    if (map.getZoom() > 11) {
-        d3.select('#map').classed('faded', true);
-        d3.select('#zoom-in').classed('hide', true);
-        run();
-    } else {
-        d3.select('#map').classed('faded', true);
-        d3.select('#zoom-in').classed('hide', false);
-        abort();
-        layer && map.removeLayer(layer);
-        layer = null;
-    }
+    const mapHtml = document.querySelector("#map");
+    const currentZoomLevel = map.getZoom();
+    const button = document.getElementById('download-changesets-button');
+    const infoText = document.getElementById("zoom-in");
     localStorage.setItem('location-hash', location.hash);
+    if (currentZoomLevel > 11) {
+        // console.log("Zoom level > 11");
+        mapHtml.classList.remove("faded");
+        infoText.classList.add("hide");
+        button.disabled = "";
+        button.title = "Download recent changesets in this region";
+        return true;
+    } else {
+        // console.log("Zoom level <= 11");
+        mapHtml.classList.add("faded");
+        infoText.classList.remove("hide");
+        button.disabled = "disabled";
+        button.title = "Zoom in to view changes";
+        return false;
+    }
 }
 
-//Download OSM changeset data from overpass
-var overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
-let loadingAnimation = document.querySelector("#loading-animation");
+//Toggle display of loading animation and appearance of download button
+function toggleWaitingScreen() {
+    const loadingAnimation = document.querySelector("#loading-animation");
+    const button = document.getElementById('download-changesets-button');
+    const buttonText = document.getElementById('download-changesets-button-text');
+
+    loadingAnimation.classList.toggle("hide");//display loading spinner
+    buttonText.innerText = (buttonText.innerText == "Get Changesets") ? "Loading..." : "Get Changesets";//Toggle button text
+    button.disabled = (button.disabled) ? button.disabled = "" : button.disabled = "disabled";//Toggle button disable
+}
+
+//On page load: Check if map is zoomed in enough. If yes: Download OSM changeset data from overpass via XHR request
+let overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
 let xhr;
-updateMap();
+let layer = null;
+
+//Check if map is zoomed in enough
+const isMapZoomedInEnough = updateMap();
+if (isMapZoomedInEnough) run();
 
 function run() {
-    loadingAnimation.classList.remove("hide");//display loading spinner
+    d3.select('#map').classed('faded', true);//Map displayed greyish (Cannot go into "toggleWaitingScreen()" because we want to keep the map greyed out in case of unsuccessful overpass query)
+    toggleWaitingScreen();
     if (xhr) xhr.abort();
-    var bounds = map.getBounds();
-    var bbox = bounds.getSouthWest().lat + ',' +
+    const bounds = map.getBounds();
+    const bbox = bounds.getSouthWest().lat + ',' +
         bounds.getSouthWest().wrap().lng + ',' +
         bounds.getNorthEast().lat + ',' +
         bounds.getNorthEast().wrap().lng;
-    var last_week = (new Date(new Date() - 1000 * 60 * 60 * 24 * days_to_show)).toISOString();
-    // var overpass_query = '[out:json];way(' + bbox + ')(newer:"' + last_week + '");out meta;node(w);out skel;node(' + bbox + ')(newer:"' + last_week + '");out meta;';
-    var overpass_query = '[adiff:"' + last_week + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
+    const pointInTimeToStartAnalysis = (new Date(new Date() - 1000 * 60 * 60 * 24 * days_to_show)).toISOString();
+    const overpass_query = '[adiff:"' + pointInTimeToStartAnalysis + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
     // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
-    xhr = d3.xml(overpass_server + 'interpreter?data=' + overpass_query
-    // xhr = d3.xml("./examples/example.xml" //To load example xml: Comment out line above and uncomment this line
+    //Either do an API call to Overpass or use a locally saved xml file for debugging purposes
+    const xmlDataLocation = overpass_server + 'interpreter?data=' + overpass_query; //API call to overpass
+    // const xmlDataLocation = "./examples/example.xml"; //To load example xml: Comment out line above and uncomment this line
+
+    xhr = d3.xml(xmlDataLocation
     ).on("error", function (error) {
-        loadingAnimation.classList.add("hide");//hide loading spinner
+        toggleWaitingScreen();
         message("alarm", "Server error: " + error.statusText); //Error message in case of no results from Overpass
     })
         .on('load', function (data) {
             // console.log(data);
-            loadingAnimation.classList.add("hide");//hide loading spinner
             var newData = document.implementation.createDocument(null, 'osm');
             var oldData = document.implementation.createDocument(null, 'osm');
             var elements = data.querySelectorAll('action');
@@ -213,20 +236,20 @@ function run() {
                 }
             }
 
-            var newGeojson = osmtogeojson.toGeojson(newData);
-            var oldGeojson = osmtogeojson.toGeojson(oldData);
+            const newGeojson = osmtogeojson.toGeojson(newData);
+            const oldGeojson = osmtogeojson.toGeojson(oldData);
             oldGeojson.features.forEach(function (feature) {
                 feature.properties.__is_old__ = true;
             });
 
             d3.select('#map').classed('faded', false);
+            toggleWaitingScreen();
             layer && map.removeLayer(layer);
 
             var datescale = d3.time.scale()
-                .domain([new Date(last_week), new Date()])
+                .domain([new Date(pointInTimeToStartAnalysis), new Date()])
                 .range([0, 1]);
             var colint = d3.interpolateRgb('#777', '#f00');
-
 
             layer = new L.GeoJSON({
                 type: 'FeatureCollection',
@@ -248,7 +271,7 @@ function run() {
                 }
             };
 
-            //What happens when hovering over each polygon/way/marker
+            //Define what happens when hovering over each polygon/way/marker
             function onEachFeature(feature, layer) {
                 // console.log(feature);
                 // console.log(layer);
@@ -297,7 +320,8 @@ function run() {
                 const tableHtml = createTable(e.layer.feature.properties.id)
                 let mapContainer = document.querySelector(".map-container");
 
-                let tagComparisonPopup = L.popup({
+                //Popup with tag comparison table
+                L.popup({
                     maxWidth: mapContainer.clientWidth - 45,
                     maxHeight: mapContainer.clientHeight - 40,
                     className: "stylePopup"
@@ -307,44 +331,10 @@ function run() {
                     .openOn(map);
             });
 
-            bytime.sort(function (a, b) {
-                return (+b.time) - (+a.time);
-            });
-
-            var results = d3.select('#results');
-            var allresults = results
-                .selectAll('div.result')
-                .data(bytime, function (d) {
-                    return d.id;
-                })
-                .attr('class', 'result')
-                .style('color', function (l) {
-                    return colint(datescale(l.time));
-                });
-            allresults.exit().remove();
-
-            var rl = allresults.enter()
-                .append('div')
-                .attr('class', 'result')
-                .attr('title', 'Changeset is highlighted on map')
-                .style('color', function (l) {
-                    return colint(datescale(l.time));
-                });
-            allresults.order();
-
             //Create tag comparison table
             function createTable(id) {
                 {
                     const node = data.querySelectorAll('[id="' + id + '"]');
-                    // const node = data.querySelectorAll('[id="1072310203"]');//"create" example
-                    // const node = data.querySelectorAll('[id="3611264529"]');//"modify" example
-                    // const node = data.querySelectorAll('[id="1501"]');//"delete" example
-
-                    //Example calls from xml file
-                    // console.log(node[0]);
-                    // console.log(node[0].parentNode.parentNode.getAttribute('type'));
-                    // console.log(node[0].querySelectorAll("tag")[0].getAttribute('k'));
-
                     //First check what type of action has been performed on the element (i.e. create, modify, delete)
                     let action = node[0].parentNode.parentNode.getAttribute('type');//Check if action is "modify", "delete" or "null"
                     if (!action) action = "create";//The xml data structure is different for "create" nodes, thus action will be "null" in the line above
@@ -501,6 +491,31 @@ function run() {
                 }
             }
 
+            bytime.sort(function (a, b) {
+                return (+b.time) - (+a.time);
+            });
+
+            var results = d3.select('#results');
+            var allresults = results
+                .selectAll('div.result')
+                .data(bytime, function (d) {
+                    return d.id;
+                })
+                .attr('class', 'result')
+                .style('color', function (l) {
+                    return colint(datescale(l.time));
+                });
+            allresults.exit().remove();
+
+            var rl = allresults.enter()
+                .append('div')
+                .attr('class', 'result')
+                .attr('title', 'Changeset is highlighted on map')
+                .style('color', function (l) {
+                    return colint(datescale(l.time));
+                });
+            allresults.order();
+
             //Highlight clicked layer on map and in sidebar
             function click(d) {
                 results
@@ -525,20 +540,12 @@ function run() {
             rl.on('click', click);//Highlight changeset on click (desktop/mobile)
             rl.on('mouseover', click);//Highlight changeset on mouseover (desktop)
 
-            let stopDownloadCheckbox = document.querySelector("#stopDownloadCheckbox");
-
             //"Zoom to changeset" button
             rl.append('div')
                 .classed('zoom', true)
                 .attr('title', 'Zoom to changeset')
                 //.html('&#x1F50E; ')//Unicode glyph for a loupe
                 .on('click', function (d) {
-                    if (stopDownloadCheckbox.checked === false) {
-                        //First stop download of changesets on pan and zoom
-                        stopDownloadCheckbox.checked = true;
-                        //Inform user
-                        message("success", "Download of changesets has been temporarily stopped");
-                    }
                     //Check each layer on the map. If it belongs to clicked changeset --> add it to a featureGroup
                     //(featureGroup needed because layers with points only don't have a getBounds function)
                     d3.event.preventDefault();
@@ -551,8 +558,8 @@ function run() {
                     map.fitBounds(changesetLayers.getBounds());
                     //On small screens (screen width < 601px) scroll all the way down, so that map is completely visible on screen
                     if (screen.width < 601) {
-                        let mapContainer = document.querySelector(".map-container");
-                        window.scrollTo({ //does not work with map container, thus "window"
+                        let mapContainer = document.querySelector(".map-container");//does not work with map container, thus used "window" in the next line
+                        window.scrollTo({
                             top: 2222,
                             behavior: 'smooth'
                         });
@@ -563,7 +570,7 @@ function run() {
                 .append('use')
                 .attr('href', 'img/icons.svg#loupe');
 
-            //Text bubble symbol
+            //Text bubble span where symbol is inserted in case of comments for this changeset
             rl.append('span')
                 .classed('text-bubble', true);
 
@@ -577,8 +584,7 @@ function run() {
                     return '//openstreetmap.org/user/' + d.user;
                 });
 
-            rl.append('span').text(' ');
-
+            //Timespan since changeset creation
             rl.append('span')
                 .attr('title', function (d) {
                     return moment(d.time).format('MMM Do YYYY, h:mm:ss a');
@@ -623,7 +629,7 @@ function run() {
                 });
                 rl.select('span.text-bubble').each(function (d) {
                     if (changesets[d.id].discussionCount > 0) {
-                        // d3.select(this).html('&#128489; ');//Speech bubble glyphicon (doesn't work on Android)
+                        // d3.select(this).html('&#128489; ');//Speech bubble glyphicon (doesn't work on Android, thus changed to SVG)
                         d3.select(this).attr('title', 'Changeset has comments');
                         d3.select(this).append('svg')
                             .classed('text-bubble-svg', true)
@@ -644,8 +650,6 @@ function run() {
 
 //Show a modal with a message
 function message(type, text) {
-    // console.log(error.statusText);
-
     // Get the infobox modal
     const infobox = document.querySelector(".infobox");
 
@@ -655,35 +659,15 @@ function message(type, text) {
     infobox.classList.add("show", type);
 }
 
-//Abort download of changesets. Empty the changesets list.
-function abort() {
-    if (xhr) {
-        xhr.abort();
-        xhr = null;
-    }
-    loadingAnimation.classList.add("hide");//hide loading spinner
-    var results = d3.select('#results');
-    var allresults = results
-        .selectAll('div.result')
-        .data([])
-        .exit().remove();
-}
 
-//Update map after paning or zooming
-let timeOutId = 0;
-map.on('dragend	', function (event) {
-    if (event.distance < 12) return;
-    if (stopDownloadCheckbox.checked) return;//if stopDownloadCheckbox is checked stop function execution. Else proceed.
-    clearTimeout(timeOutId);
-    timeOutId = setTimeout(updateMap, 500);
-});
-map.on('zoomend', function () {
-    if (stopDownloadCheckbox.checked) return;//if stopDownloadCheckbox is checked stop function execution. Else proceed.
-    clearTimeout(timeOutId);
-    timeOutId = setTimeout(updateMap, 500);
+//Check current zoom level of map and show info message, if zoomed out too far
+map.on('zoom', updateMap);
+//Update location in local storage
+map.on('drag', function (e) {
+    localStorage.setItem('location-hash', location.hash);
 });
 
-//Update map after change in time range selector
+//Update variable "days_to_show" after change in time range selector
 d3.select('#resolution')
     .attr('title', 'Select a time range')
     .on('change', function () {
@@ -702,10 +686,12 @@ d3.select('#resolution')
                 break;
         }
         localStorage.setItem("resolution", days_to_show);
-        updateMap();
     });
 
-//Display "Back-to-top" button if changesets in sidebar are overflowing
+//Start download on click of button
+document.querySelector("#download-changesets-button").addEventListener("click", run);
+
+//Display "Back-to-top" button if changesets in sidebar are overflowing and user scrolled down a bit
 sidebar.addEventListener("scroll", event => {
     let toTop = document.querySelector(".to-top");
     // console.log(sidebar.scrollTop);
