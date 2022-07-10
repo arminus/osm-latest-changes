@@ -236,6 +236,41 @@ a:visited {
   margin-left: 6px;
 }
 
+.traffic-light-container {
+  display: inline-block;
+  margin-right: 3px;
+}
+
+.traffic-light {
+  background-color: black;
+  width: 20px;
+  height: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+
+.traffic-light span {
+  width: 9px;
+  height: 9px;
+  border-radius: 100%;
+}
+
+.gray {
+  background-color: gray;
+}
+
+.green {
+  background-color: green;
+}
+
+.red {
+  background-color: red;
+}
+
 .result .text-bubble {
   cursor: default;
 }

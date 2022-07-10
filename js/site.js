@@ -162,7 +162,9 @@ function toggleWaitingScreen() {
 }
 
 //On page load: Check if map is zoomed in enough. If yes: Download OSM changeset data from overpass via XHR request
-let overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
+const overpass_server = '//overpass-api.de/api/'; //'https://overpass.kumi.systems/api/';
+const vandalismCheckResult = {};
+const deletedElementsLimit = -3; //If 3 more elements or tags have been deleted than added, the traffic light will change to red
 let xhr;
 let layer = null;
 
@@ -194,6 +196,7 @@ function run() {
     })
         .on('load', function (data) {
             // console.log(data);
+            vandalismChecker();//Create object with vandalism analysis for each downloaded changeset
             var newData = document.implementation.createDocument(null, 'osm');
             var oldData = document.implementation.createDocument(null, 'osm');
             var elements = data.querySelectorAll('action');
@@ -330,6 +333,70 @@ function run() {
                     .setContent(tableHtml)
                     .openOn(map);
             });
+
+            //Vandalism Checker
+            //Simple sanity checker for all the downloaded changesets. It summarizes all elements and tags which have been added or deleted
+            //in the changeset.If the sum is below a certain treshold (currently -3) then a traffic light changes to red to alert the user
+            //of this changeset.
+            function vandalismChecker() {
+                let actions = data.querySelectorAll("action");
+                // console.log(actions);
+                for (let i = 0; i < actions.length; i++) {
+                    //Get type, i.e. "create", "modify" or "delete"
+                    const type = actions[i].getAttribute("type");
+                    // console.log(type);
+
+                    //Get changeset number
+                    let changesetNumber
+                    if (type === "create") changesetNumber = actions[i].lastElementChild.getAttribute("changeset");
+                    else changesetNumber = actions[i].lastElementChild.firstElementChild.getAttribute("changeset");
+                    // console.log(changesetNumber);
+
+                    //Create empty changeset object, if new.
+                    if (!vandalismCheckResult[changesetNumber]) vandalismCheckResult[changesetNumber] = { deltaInNodesWays: 0, deltaInTags: 0, possibleVandalism: false };
+
+                    //Check which action is performed
+                    //"Create"
+                    //deltaInNodesWays++
+                    //deltaInTags += nTagsAdded
+                    if (type === "create") {
+                        // const changesetNumber = actions[11].lastElementChild.getAttribute("changeset");
+                        const nTagsAdded = actions[i].lastElementChild.querySelectorAll("tag").length;
+                        // console.log(nTagsAdded);
+                        vandalismCheckResult[changesetNumber].deltaInNodesWays++;
+                        vandalismCheckResult[changesetNumber].deltaInTags += nTagsAdded;
+                    }
+
+                    // "Modify"
+                    //deltaInNodesWays = unchanged
+                    //deltaInTags += nTagsNew - nTagsOld
+                    if (type === "modify") {
+                        const nTagsNew = actions[i].lastElementChild.firstElementChild.querySelectorAll("tag").length;
+                        const nTagsOld = actions[i].firstElementChild.firstElementChild.querySelectorAll("tag").length;
+                        // console.log(nTagsNew);
+                        // console.log(nTagsOld);
+                        vandalismCheckResult[changesetNumber].deltaInTags += (nTagsNew - nTagsOld);
+                    }
+
+                    // "Delete"
+                    //deltaInNodesWays--
+                    //deltaInTags -= nTags
+                    if (type === "delete") {
+                        const nTagsDeleted = actions[i].firstElementChild.querySelectorAll("tag").length;
+                        // console.log(nTagsDeleted);
+                        vandalismCheckResult[changesetNumber].deltaInNodesWays--;
+                        vandalismCheckResult[changesetNumber].deltaInTags -= nTagsDeleted;
+                    }
+                }
+                for (const changeset in vandalismCheckResult) {
+                    // console.log(changeset);
+                    // console.log(vandalismCheckResult[changeset].deltaInNodesWays);
+                    if ((vandalismCheckResult[changeset].deltaInNodesWays < deletedElementsLimit) || (vandalismCheckResult[changeset].deltaInTags < deletedElementsLimit)) {
+                        vandalismCheckResult[changeset].possibleVandalism = true;
+                    }
+                }
+                // console.log(vandalismCheckResult);
+            }
 
             //Create tag comparison table
             function createTable(id) {
@@ -569,6 +636,44 @@ function run() {
                 .classed('loupe', true)
                 .append('use')
                 .attr('href', 'img/icons.svg#loupe');
+
+            //Vandalism Checker traffic light
+            let trafficLightContainer = rl.append("div")
+                .classed("traffic-light-container", true)
+                .attr('title', function (d) {
+                    const changesetNumber = d.id;
+                    const possibleVandalism = vandalismCheckResult[changesetNumber].possibleVandalism;
+                    const deltaInNodesWays = vandalismCheckResult[changesetNumber].deltaInNodesWays;
+                    const deltaInTags = vandalismCheckResult[changesetNumber].deltaInTags;
+                    let titleText;
+                    if (possibleVandalism) {
+                        titleText = `This changeset is potentially destructive!
+Sum of all added/deleted nodes or ways: ${deltaInNodesWays}. ${deltaInNodesWays < deletedElementsLimit ? "This is suspicious!" : ""}
+Sum of all added/deleted tags: ${deltaInTags}. ${deltaInTags < deletedElementsLimit ? "This is suspicious!" : ""}
+
+Reminder: It is often NOT necessary to delete elements in OSM. For example a closed shop should be tagged as 'disused:shop'. One day a new shop might open at the same exact lot and the tags can be updated. The same is true for demolished buildings ('demolished:building')
+`
+                    } else {
+                        titleText = `This changeset looks good!
+Sum of all added/deleted nodes or ways: ${deltaInNodesWays}. ${deltaInNodesWays < deletedElementsLimit ? "This is suspicious!" : ""}
+Sum of all added/deleted tags: ${deltaInTags}. ${deltaInTags < deletedElementsLimit ? "This is suspicious!" : ""}`
+                    }
+                    return titleText;
+                })
+            let trafficLight = trafficLightContainer.append("div")
+                .classed("traffic-light", true)
+            trafficLight.append("span")
+                .attr('class', function (d) {
+                    const changesetNumber = d.id;
+                    const possibleVandalism = vandalismCheckResult[changesetNumber].possibleVandalism;
+                    return (possibleVandalism ? "gray" : "green");
+                });
+            trafficLight.append("span")
+                .attr('class', function (d) {
+                    const changesetNumber = d.id;
+                    const possibleVandalism = vandalismCheckResult[changesetNumber].possibleVandalism;
+                    return (possibleVandalism ? "red" : "gray");
+                });
 
             //Text bubble span where symbol is inserted in case of comments for this changeset
             rl.append('span')
