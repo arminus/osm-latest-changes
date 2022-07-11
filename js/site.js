@@ -336,7 +336,7 @@ function run() {
 
             //Vandalism Checker
             //Simple sanity checker for all the downloaded changesets. It summarizes all elements and tags which have been added or deleted
-            //in the changeset.If the sum is below a certain treshold (currently -3) then a traffic light changes to red to alert the user
+            //in the changeset. If the sum is below a certain treshold (currently -3) then a traffic light changes to red to alert the user
             //of this changeset.
             function vandalismChecker() {
                 let actions = data.querySelectorAll("action");
@@ -360,11 +360,20 @@ function run() {
                     //deltaInNodesWays++
                     //deltaInTags += nTagsAdded
                     if (type === "create") {
-                        // const changesetNumber = actions[11].lastElementChild.getAttribute("changeset");
+                        //Check the amount of tags that have been added
                         const nTagsAdded = actions[i].lastElementChild.querySelectorAll("tag").length;
                         // console.log(nTagsAdded);
-                        vandalismCheckResult[changesetNumber].deltaInNodesWays++;
                         vandalismCheckResult[changesetNumber].deltaInTags += nTagsAdded;
+
+                        //If a node with 0 tags has been created: Do not add it to deltaInNodesWays
+                        //(normally it is just a newly created node of an already existing way)
+
+                        //Get element type (i.e. "node" or "way")
+                        const elementType = actions[i].firstElementChild.nodeName;
+                        // console.log(elementType);
+
+                        if (elementType === "node" && nTagsAdded == 0) continue;
+                        else vandalismCheckResult[changesetNumber].deltaInNodesWays++;
                     }
 
                     // "Modify"
@@ -384,8 +393,19 @@ function run() {
                     if (type === "delete") {
                         const nTagsDeleted = actions[i].firstElementChild.querySelectorAll("tag").length;
                         // console.log(nTagsDeleted);
-                        vandalismCheckResult[changesetNumber].deltaInNodesWays--;
                         vandalismCheckResult[changesetNumber].deltaInTags -= nTagsDeleted;
+
+                        //If a node with 0 tags has been deleted: Do not subtract it from deltaInNodesWays
+                        // (normally it is just a newly deleted node of an already existing way)
+
+                        //Get element type (i.e. "node" or "way")
+                        const elementType = actions[i].firstElementChild.firstElementChild.nodeName;
+                        // console.log(elementType);
+                        //Check the amount of tags before deletion
+                        const nTagsBeforeDeletion = actions[i].firstElementChild.firstElementChild.querySelectorAll("tag").length;
+                        // console.log(nTagsBeforeDeletion);
+                        if (elementType === "node" && nTagsBeforeDeletion == 0) continue;
+                        else vandalismCheckResult[changesetNumber].deltaInNodesWays--;
                     }
                 }
                 for (const changeset in vandalismCheckResult) {
