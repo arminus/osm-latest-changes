@@ -119,7 +119,7 @@ if (resolution_from_local_storage) {
 }
 
 //Update hash on map pan/zoom (functionality from leaflet-hash.js)
-L.hash(map);
+map.addHash();
 
 //Map attribution
 map.attributionControl.setPrefix('');
