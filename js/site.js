@@ -17,7 +17,7 @@ var map = L.map('map', {
 //Set map view either from hash value in URL (prio 1) or coords from local storage (prio 2)
 var hash_from_local_storage = localStorage.getItem('location-hash');
 if (location.hash || hash_from_local_storage) {
-    var h = (location.hash || hash_from_local_storage).substr(1).split('/');
+    var h = (location.hash || hash_from_local_storage).substring(1).split('/');
     map.setView([h[1], h[2]], h[0]);
 } else {
     map.setView([15, -15], 2);
@@ -184,12 +184,12 @@ function run() {
         bounds.getNorthEast().lat + ',' +
         bounds.getNorthEast().wrap().lng;
     const pointInTimeToStartAnalysis = (new Date(new Date() - 1000 * 60 * 60 * 24 * days_to_show)).toISOString();
-    const overpass_query = '[adiff:"' + pointInTimeToStartAnalysis + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
-    // console.log(overpass_server + 'interpreter?data=' + overpass_query);
+    // const overpass_query = '[adiff:"' + pointInTimeToStartAnalysis + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
+    console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
     //Either do an API call to Overpass or use a locally saved xml file for debugging purposes
-    const xmlDataLocation = overpass_server + 'interpreter?data=' + overpass_query; //API call to overpass
-    // const xmlDataLocation = "./examples/example.xml"; //To load example xml: Comment out line above and uncomment this line
+    // const xmlDataLocation = overpass_server + 'interpreter?data=' + overpass_query; //API call to overpass
+    const xmlDataLocation = "./examples/example.xml"; //To load example xml: Comment out line above and uncomment this line
 
     xhr = d3.xml(xmlDataLocation
     ).on("error", function (error) {
