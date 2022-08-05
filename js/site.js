@@ -14,14 +14,12 @@ var map = L.map('map', {
     }]
 });
 
-//Set map view either from hash value in URL (prio 1) or coords from local storage (prio 2)
-var hash_from_local_storage = localStorage.getItem('location-hash');
-if (location.hash || hash_from_local_storage) {
-    var h = (location.hash || hash_from_local_storage).substring(1).split('/');
-    map.setView([h[1], h[2]], h[0]);
-} else {
-    map.setView([15, -15], 2);
-}
+//Set location.hash either from hash value in URL (prio 1) or coords from local storage (prio 2).
+//If neither is defined: Zoom all the way out to "#2/15/-15" (prio 3)
+//The map view itself is set within leaflet-hash afterwards ("map.setView")
+const hashFromLocalStorage = localStorage.getItem('location-hash');
+
+if (!location.hash) location.hash = hashFromLocalStorage || "#2/15/-15";
 
 //Activate gesture handling only on small screens ("use two fingers to pan and zoom map")
 function activateGestureHandling() {

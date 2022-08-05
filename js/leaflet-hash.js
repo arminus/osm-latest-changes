@@ -26,7 +26,9 @@
           }
         ];
       }if (location.hash) {
-        this.updateFromState(this.parseHash(location.hash));
+        this.updateFromState(this.parseHash(location.hash));//sets the view
+        const pstate = this.formatState();
+        history.replaceState.apply(history, pstate);//write current location to browser history cache (for back button)
       }
       if (this.map._loaded) {
         return this.startListning();
