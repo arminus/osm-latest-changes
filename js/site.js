@@ -14,8 +14,8 @@ var map = L.map('map', {
     }]
 });
 
-//Set location.hash either from hash value in URL (prio 1) or coords from local storage (prio 2).
-//If neither is defined: Zoom all the way out to "#2/15/-15" (prio 3)
+//Either keep hash value in URL (prio 1) or set location.hash with coords from local storage (prio 2).
+//If no entry in local storage: Zoom all the way out to "#2/15/-15" (prio 3)
 //The map view itself is set within leaflet-hash afterwards ("map.setView")
 const hashFromLocalStorage = localStorage.getItem('location-hash');
 
