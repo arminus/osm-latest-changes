@@ -239,6 +239,7 @@ a:visited {
 .traffic-light-container {
   display: inline-block;
   margin-right: 3px;
+  cursor: help;
 }
 
 .traffic-light {
