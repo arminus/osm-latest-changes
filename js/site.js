@@ -94,7 +94,7 @@ document.addEventListener("keyup", event => {
 
 //Open link to OSM when "RMB --> Open with..."
 function openOSM(e) {
-    const url = `https://www.openstreetmap.org/?mlat=${e.latlng.lat}&mlon=${e.latlng.lng}#map=19/${e.latlng.lat}/${e.latlng.lng}`;
+    const url = `https://www.openstreetmap.org/?mlat=${e.latlng.lat}&mlon=${e.latlng.lng}#map=${map.getZoom()}/${e.latlng.lat}/${e.latlng.lng}`;
     window.open(url, '_blank').focus();
 }
 //Open link to Google Maps when "RMB --> Open with..."
