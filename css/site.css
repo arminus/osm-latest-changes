@@ -273,7 +273,7 @@ a:visited {
 }
 
 .result .text-bubble {
-  cursor: default;
+  cursor: help;
 }
 
 .result .text-bubble .text-bubble-svg {

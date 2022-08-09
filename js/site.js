@@ -313,7 +313,7 @@ function run() {
                 //Highlight clicked layer on map and in sidebar
                 click({ feature: e.layer });
                 //Scroll selected element into view in sidebar
-                //(Only on large screens. On small screens the map scrolls out of view, which is annoying)
+                //(Only on large screens. On small screens the map would scroll out of view, which is annoying)
                 if (screen.width > 600) {
                     document.querySelector('.active').scrollIntoView({
                         behavior: 'smooth'
@@ -755,7 +755,7 @@ Sum of all added/deleted tags: ${deltaInTags}. ${deltaInTags < deletedElementsLi
                 rl.select('span.text-bubble').each(function (d) {
                     if (changesets[d.id].discussionCount > 0) {
                         // d3.select(this).html('&#128489; ');//Speech bubble glyphicon (doesn't work on Android, thus changed to SVG)
-                        d3.select(this).attr('title', 'Changeset has comments');
+                        d3.select(this).attr('title', `Changeset has ${changesets[d.id].discussionCount} comment${changesets[d.id].discussionCount !== 1 ? "s" : ""}`);
                         d3.select(this).append('svg')
                             .classed('text-bubble-svg', true)
                             .append('use')
