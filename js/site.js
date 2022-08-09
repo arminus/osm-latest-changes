@@ -1,3 +1,4 @@
+//Instantiate map
 var map = L.map('map', {
     gestureHandling: activateGestureHandling(),
     contextmenu: true,
@@ -18,7 +19,6 @@ var map = L.map('map', {
 //If no entry in local storage: Zoom all the way out to "#2/15/-15" (prio 3)
 //The map view itself is set within leaflet-hash afterwards ("map.setView")
 const hashFromLocalStorage = localStorage.getItem('location-hash');
-
 if (!location.hash) location.hash = hashFromLocalStorage || "#2/15/-15";
 
 //Activate gesture handling only on small screens ("use two fingers to pan and zoom map")
@@ -34,6 +34,9 @@ window.addEventListener("resize", () => {
     if (screen.width < 601) map.gestureHandling.enable();
     else map.gestureHandling.disable();
 });
+
+//Add scale
+L.control.scale().addTo(map);
 
 //Add "set current location" button to map
 L.control.locate({
@@ -70,6 +73,7 @@ L.Control.toggleSidebarButton = L.Control.extend(
 let toggleSidebarButton = new L.Control.toggleSidebarButton();
 map.addControl(toggleSidebarButton);
 
+//Toggle sidebar class and update Leaflet map size
 function toggleSidebar() {
     sidebar.classList.toggle("hide");
     // let size = map.getSize();
@@ -104,16 +108,16 @@ function openGmaps(e) {
 }
 
 //Timeframe
-var days_to_show;
-// load resolution_from_local_storage from local storage, if available
-var resolution_from_local_storage = localStorage.getItem("resolution");
-if (resolution_from_local_storage) {
-    days_to_show = resolution_from_local_storage;
+let daysToShow;
+// load resolutionFromLocalStorage from local storage, if available
+const resolutionFromLocalStorage = localStorage.getItem("resolution");
+if (resolutionFromLocalStorage) {
+    daysToShow = resolutionFromLocalStorage;
     // select value from local storage in drop down menu
-    document.getElementById('resolution').value = days_to_show;
+    document.getElementById('resolution').value = daysToShow;
 } else {
     // else, i.e. no resolution saved in local storage: Default to 7 days
-    days_to_show = 7;
+    daysToShow = 7;
 }
 
 //Update hash on map pan/zoom (functionality from leaflet-hash.js)
@@ -172,6 +176,7 @@ let layer = null;
 const isMapZoomedInEnough = updateMap();
 if (isMapZoomedInEnough) run();
 
+//Start download of changeset data
 function run() {
     d3.select('#map').classed('faded', true);//Map displayed greyish (Cannot go into "toggleWaitingScreen()" because we want to keep the map greyed out in case of unsuccessful overpass query)
     toggleWaitingScreen();
@@ -181,7 +186,7 @@ function run() {
         bounds.getSouthWest().wrap().lng + ',' +
         bounds.getNorthEast().lat + ',' +
         bounds.getNorthEast().wrap().lng;
-    const pointInTimeToStartAnalysis = (new Date(new Date() - 1000 * 60 * 60 * 24 * days_to_show)).toISOString();
+    const pointInTimeToStartAnalysis = (new Date(new Date() - 1000 * 60 * 60 * 24 * daysToShow)).toISOString();
     const overpass_query = '[adiff:"' + pointInTimeToStartAnalysis + '"][bbox:' + bbox + '][out:xml][timeout:22];way->.ways;(.ways>;node;);out meta;.ways out geom meta;';
     // console.log(overpass_server + 'interpreter?data=' + overpass_query);
 
@@ -784,7 +789,6 @@ function message(type, text) {
     infobox.classList.add("show", type);
 }
 
-
 //Check current zoom level of map and show info message, if zoomed out too far
 map.on('zoom', updateMap);
 //Update location in local storage
@@ -792,25 +796,25 @@ map.on('drag', function (e) {
     localStorage.setItem('location-hash', location.hash);
 });
 
-//Update variable "days_to_show" after change in time range selector
+//Update variable "daysToShow" after change in time range selector
 d3.select('#resolution')
     .attr('title', 'Select a time range')
     .on('change', function () {
         switch (this.selectedIndex) {
             case 0: // last 24h
-                days_to_show = 1;
+                daysToShow = 1;
                 break;
             case 1: // last 3 days
-                days_to_show = 3;
+                daysToShow = 3;
                 break;
             case 2: // last week
-                days_to_show = 7;
+                daysToShow = 7;
                 break;
             case 3: // last month
-                days_to_show = 30;
+                daysToShow = 30;
                 break;
         }
-        localStorage.setItem("resolution", days_to_show);
+        localStorage.setItem("resolution", daysToShow);
     });
 
 //Start download on click of button
