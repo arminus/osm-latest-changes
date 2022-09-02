@@ -466,6 +466,7 @@ h2 select {
   /* Safari */
   animation: spin 2s linear infinite;
   z-index: 444;
+  pointer-events: none;
 }
 
 @keyframes spin {
