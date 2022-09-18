@@ -178,6 +178,9 @@ if (isMapZoomedInEnough) run();
 
 //Start download of changeset data
 function run() {
+
+    let users = [];
+
     d3.select('#map').classed('faded', true);//Map displayed greyish (Cannot go into "toggleWaitingScreen()" because we want to keep the map greyed out in case of unsuccessful overpass query)
     toggleWaitingScreen();
     if (xhr) xhr.abort();
@@ -308,8 +311,44 @@ function run() {
                     features: []
                 };
                 changesets[l.feature.properties.meta.changeset].features.push(l);
-
+                users.push(l.feature.properties.meta.user);
             });
+
+            let uniqueUsers = [...new Set(users)];
+            uniqueUsers = uniqueUsers.sort();
+            uniqueUsers.unshift("<All>");
+
+            let usersDropdown = d3.select("#users").on('change', function () {
+                let selectedUser = d3.select("#users").selectAll("option")[0][this.selectedIndex].value;
+                bytime = [];
+                // FIXME: this doesn't work for the 2nd selection and onwards
+                for (var k in changesets) {
+                    if (selectedUser == "<All>" || changesets[k].user == selectedUser)
+                        bytime.push(changesets[k]);
+                }
+                // redundant code from below and I really don't know what I'm doing here...
+                var results = d3.select('#results');
+                var allresults = results
+                    .selectAll('div.result')
+                    .data(bytime, function (d) {
+                        return d.id;
+                    })
+                    .attr('class', 'result')
+                    .style('color', function (l) {
+                        return colint(datescale(l.time));
+                    });
+                allresults.exit().remove();
+            });
+            var options = usersDropdown.selectAll("option")
+                .data(uniqueUsers)
+                .enter()
+                .append("option");
+            options.text(function(d) {
+                return d;
+            }).attr("value", function(d) {
+                return d;
+            });
+
             for (var k in changesets) {
                 bytime.push(changesets[k]);
             }
