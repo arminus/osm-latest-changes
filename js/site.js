@@ -180,6 +180,7 @@ if (isMapZoomedInEnough) run();
 function run() {
 
     let users = [];
+    let editors = [];
 
     d3.select('#map').classed('faded', true);//Map displayed greyish (Cannot go into "toggleWaitingScreen()" because we want to keep the map greyed out in case of unsuccessful overpass query)
     toggleWaitingScreen();
@@ -321,23 +322,11 @@ function run() {
             let usersDropdown = d3.select("#users").on('change', function () {
                 let selectedUser = d3.select("#users").selectAll("option")[0][this.selectedIndex].value;
                 bytime = [];
-                // FIXME: this doesn't work for the 2nd selection and onwards
                 for (var k in changesets) {
                     if (selectedUser == "<All>" || changesets[k].user == selectedUser)
                         bytime.push(changesets[k]);
                 }
-                // redundant code from below and I really don't know what I'm doing here...
-                var results = d3.select('#results');
-                var allresults = results
-                    .selectAll('div.result')
-                    .data(bytime, function (d) {
-                        return d.id;
-                    })
-                    .attr('class', 'result')
-                    .style('color', function (l) {
-                        return colint(datescale(l.time));
-                    });
-                allresults.exit().remove();
+                updateDivs();
             });
             var options = usersDropdown.selectAll("option")
                 .data(uniqueUsers)
@@ -626,194 +615,227 @@ function run() {
                 return (+b.time) - (+a.time);
             });
 
-            var results = d3.select('#results');
-            var allresults = results
-                .selectAll('div.result')
-                .data(bytime, function (d) {
-                    return d.id;
-                })
-                .attr('class', 'result')
-                .style('color', function (l) {
-                    return colint(datescale(l.time));
-                });
-            allresults.exit().remove();
+            updateDivs();
 
-            var rl = allresults.enter()
-                .append('div')
-                .attr('class', 'result')
-                .attr('title', 'Changeset is highlighted on map')
-                .style('color', function (l) {
-                    return colint(datescale(l.time));
-                });
-            allresults.order();
-
-            //Highlight clicked layer on map and in sidebar
-            function click(d) {
-                results
+            function updateDivs() {
+                var results = d3.select('#results');
+                var allresults = results
                     .selectAll('div.result')
-                    .classed('active', function (_) {
-                        return _.id == (d.id || d.feature.feature.properties.meta.changeset);
+                    .data(bytime, function (d) {
+                        return d.id;
+                    })
+                    .attr('class', 'result')
+                    .style('color', function (l) {
+                        return colint(datescale(l.time));
                     });
-                layer.eachLayer(function (l) {
-                    layer.resetStyle(l);
-                })
-                var id = d.id ? d.id : d.feature.feature.properties.meta.changeset;
-                layer.eachLayer(function (l) {
-                    if (l.feature.properties.meta.changeset == id) {
-                        l.setStyle({ color: '#008dff' });
-                    }
-                });
+                allresults.exit().remove();
 
-                //Make sure that sidebar is displayed
-                sidebar.classList.remove("hide");
-            }
-
-            rl.on('click', click);//Highlight changeset on click (desktop/mobile)
-            rl.on('mouseover', click);//Highlight changeset on mouseover (desktop)
-
-            //"Zoom to changeset" button
-            rl.append('div')
-                .classed('zoom', true)
-                .attr('title', 'Zoom to changeset')
-                //.html('&#x1F50E; ')//Unicode glyph for a loupe
-                .on('click', function (d) {
-                    //Check each layer on the map. If it belongs to clicked changeset --> add it to a featureGroup
-                    //(featureGroup needed because layers with points only don't have a getBounds function)
-                    d3.event.preventDefault();
-                    var id = d.id ? d.id : d.feature.feature.properties.meta.changeset;
-                    var changesetLayers = L.featureGroup();
-                    layer.eachLayer(function (l) {
-                        if (l.feature.properties.meta.changeset == id) l.addTo(changesetLayers);
+                var rl = allresults.enter()
+                    .append('div')
+                    .attr('class', 'result')
+                    .attr('title', 'Changeset is highlighted on map')
+                    .style('color', function (l) {
+                        return colint(datescale(l.time));
                     });
-                    //Zoom and pan to featureGroup
-                    map.fitBounds(changesetLayers.getBounds());
-                    //On small screens (screen width < 601px) scroll all the way down, so that map is completely visible on screen
-                    if (screen.width < 601) {
-                        let mapContainer = document.querySelector(".map-container");//does not work with map container, thus used "window" in the next line
-                        window.scrollTo({
-                            top: 2222,
-                            behavior: 'smooth'
+                allresults.order();
+
+                //Highlight clicked layer on map and in sidebar
+                function click(d) {
+                    results
+                        .selectAll('div.result')
+                        .classed('active', function (_) {
+                            return _.id == (d.id || d.feature.feature.properties.meta.changeset);
                         });
-                    }
-                })
-                .append('svg')
-                .classed('loupe', true)
-                .append('use')
-                .attr('href', 'img/icons.svg#loupe');
+                    layer.eachLayer(function (l) {
+                        layer.resetStyle(l);
+                    })
+                    var id = d.id ? d.id : d.feature.feature.properties.meta.changeset;
+                    layer.eachLayer(function (l) {
+                        if (l.feature.properties.meta.changeset == id) {
+                            l.setStyle({ color: '#008dff' });
+                        }
+                    });
 
-            //Vandalism Checker traffic light
-            let trafficLightContainer = rl.append("div")
-                .classed("traffic-light-container", true)
-                .attr('title', function (d) {
-                    const changesetNumber = d.id;
-                    const possibleVandalism = vandalismCheckResult[changesetNumber].possibleVandalism;
-                    const deltaInNodesWays = vandalismCheckResult[changesetNumber].deltaInNodesWays;
-                    const deltaInTags = vandalismCheckResult[changesetNumber].deltaInTags;
-                    let titleText;
-                    if (possibleVandalism) {
-                        titleText = `This changeset is potentially destructive!
+                    //Make sure that sidebar is displayed
+                    sidebar.classList.remove("hide");
+                }
+
+                rl.on('click', click);//Highlight changeset on click (desktop/mobile)
+                rl.on('mouseover', click);//Highlight changeset on mouseover (desktop)
+
+                //"Zoom to changeset" button
+                rl.append('div')
+                    .classed('zoom', true)
+                    .attr('title', 'Zoom to changeset')
+                    //.html('&#x1F50E; ')//Unicode glyph for a loupe
+                    .on('click', function (d) {
+                        //Check each layer on the map. If it belongs to clicked changeset --> add it to a featureGroup
+                        //(featureGroup needed because layers with points only don't have a getBounds function)
+                        d3.event.preventDefault();
+                        var id = d.id ? d.id : d.feature.feature.properties.meta.changeset;
+                        var changesetLayers = L.featureGroup();
+                        layer.eachLayer(function (l) {
+                            if (l.feature.properties.meta.changeset == id) l.addTo(changesetLayers);
+                        });
+                        //Zoom and pan to featureGroup
+                        map.fitBounds(changesetLayers.getBounds());
+                        //On small screens (screen width < 601px) scroll all the way down, so that map is completely visible on screen
+                        if (screen.width < 601) {
+                            let mapContainer = document.querySelector(".map-container");//does not work with map container, thus used "window" in the next line
+                            window.scrollTo({
+                                top: 2222,
+                                behavior: 'smooth'
+                            });
+                        }
+                    })
+                    .append('svg')
+                    .classed('loupe', true)
+                    .append('use')
+                    .attr('href', 'img/icons.svg#loupe');
+
+                //Vandalism Checker traffic light
+                let trafficLightContainer = rl.append("div")
+                    .classed("traffic-light-container", true)
+                    .attr('title', function (d) {
+                        const changesetNumber = d.id;
+                        const possibleVandalism = vandalismCheckResult[changesetNumber].possibleVandalism;
+                        const deltaInNodesWays = vandalismCheckResult[changesetNumber].deltaInNodesWays;
+                        const deltaInTags = vandalismCheckResult[changesetNumber].deltaInTags;
+                        let titleText;
+                        if (possibleVandalism) {
+                            titleText = `This changeset is potentially destructive!
 Sum of all added/deleted nodes or ways: ${deltaInNodesWays}. ${deltaInNodesWays < deletedElementsLimit ? "This is suspicious!" : ""}
 Sum of all added/deleted tags: ${deltaInTags}. ${deltaInTags < deletedElementsLimit ? "This is suspicious!" : ""}
 
 Reminder: It is often NOT necessary to delete elements in OSM. For example a closed shop should be tagged as 'disused:shop'. One day a new shop might open at the same exact lot and the tags can be updated. The same is true for demolished buildings ('demolished:building')
 `
-                    } else {
-                        titleText = `This changeset looks good!
+                        } else {
+                            titleText = `This changeset looks good!
 Sum of all added/deleted nodes or ways: ${deltaInNodesWays}. ${deltaInNodesWays < deletedElementsLimit ? "This is suspicious!" : ""}
 Sum of all added/deleted tags: ${deltaInTags}. ${deltaInTags < deletedElementsLimit ? "This is suspicious!" : ""}`
-                    }
-                    return titleText;
+                        }
+                        return titleText;
+                    })
+                let trafficLight = trafficLightContainer.append("div")
+                    .classed("traffic-light", true)
+                trafficLight.append("span")
+                    .attr('class', function (d) {
+                        const changesetNumber = d.id;
+                        const possibleVandalism = vandalismCheckResult[changesetNumber].possibleVandalism;
+                        return (possibleVandalism ? "gray" : "green");
+                    });
+                trafficLight.append("span")
+                    .attr('class', function (d) {
+                        const changesetNumber = d.id;
+                        const possibleVandalism = vandalismCheckResult[changesetNumber].possibleVandalism;
+                        return (possibleVandalism ? "red" : "gray");
+                    });
+
+                //Text bubble span where symbol is inserted in case of comments for this changeset
+                rl.append('span')
+                    .classed('text-bubble', true);
+
+                //User name
+                rl.append('a').text(function (d) {
+                    return d.user;
                 })
-            let trafficLight = trafficLightContainer.append("div")
-                .classed("traffic-light", true)
-            trafficLight.append("span")
-                .attr('class', function (d) {
-                    const changesetNumber = d.id;
-                    const possibleVandalism = vandalismCheckResult[changesetNumber].possibleVandalism;
-                    return (possibleVandalism ? "gray" : "green");
+                    .attr('title', 'Go to OSM user page')
+                    .attr('target', '_blank')
+                    .attr('href', function (d) {
+                        return '//openstreetmap.org/user/' + d.user;
+                    });
+
+                //Timespan since changeset creation
+                rl.append('span')
+                    .attr('title', function (d) {
+                        return moment(d.time).format('MMM Do YYYY, h:mm:ss a');
+                    })
+                    .attr('class', 'date').text(function (d) {
+                        return moment(d.time).fromNow();
+                    });
+
+                //link to achavi (temporarily hidden. To be discussed, if needed or not)
+                // rl.append('span').text(' ');
+                // rl.append('a').attr('class', 'reveal').text('«achavi»')
+                //     .attr('target', '_blank')
+                //     .attr('title', 'Get details about this changeset on Achavi')
+                //     .attr('href', function (d) {
+                //         return 'https://overpass-api.de/achavi/?changeset=' + d.id;
+                //     });
+
+                //Changeset information
+                rl.append('div').attr('class', 'changeset');
+                var queue = d3.queue();
+                var changesetIds = rl.data()
+                    .map(function (d) { return d.id })
+                    .filter(function (changesetId) { return changesetId !== ''; });
+                while (changesetIds.length > 0) {
+                    queue.defer(d3.xml, 'https://www.openstreetmap.org/api/0.6/changesets?changesets=' + changesetIds.splice(0, 100).join(','));
+                }
+                queue.awaitAll(function (error, xmls) {
+                    if (error) return console.error(error);
+
+                    var changesets = {};
+                    xmls.forEach(function (xml) {
+                        var css = xml.getElementsByTagName('changeset');
+                        for (var i = 0; i < css.length; i++) {
+                            var cid = css[i].getAttribute('id');
+                            changesets[cid] = {
+                                discussionCount: +css[i].getAttribute("comments_count")
+                            };
+                            var tag = css[i].querySelector('tag[k="comment"]');
+                            if (tag)
+                                changesets[cid].comment = tag.getAttribute('v');
+                            tag = css[i].querySelector('tag[k="created_by"]');
+                            if (tag) {
+                                changesets[cid].created_by = tag.getAttribute('v');
+                                editors.push(changesets[cid].created_by);
+                            }
+                        }
+                    });
+
+                    let uniqueEditors = [...new Set(editors)];
+                    uniqueEditors = uniqueEditors.sort();
+                    uniqueEditors.unshift("<All>");
+        
+                    let editorsDropdown = d3.select("#editors").on('change', function () {
+                        let selectedEditor = d3.select("#editors").selectAll("option")[0][this.selectedIndex].value;
+                        bytime = [];
+                        for (var k in changesets) {
+                            if (selectedEditor == "<All>" || changesets[k].created_by == selectedEditor)
+                                bytime.push(changesets[k]);
+                        }
+                        updateDivs();
+                    });
+                    var options = editorsDropdown.selectAll("option")
+                        .data(uniqueEditors)
+                        .enter()
+                        .append("option");
+                    options.text(function(d) {
+                        return d;
+                    }).attr("value", function(d) {
+                        return d;
+                    });
+                            
+                    rl.select('span.text-bubble').each(function (d) {
+                        if (changesets[d.id].discussionCount > 0) {
+                            // d3.select(this).html('&#128489; ');//Speech bubble glyphicon (doesn't work on Android, thus changed to SVG)
+                            d3.select(this).attr('title', `Changeset has ${changesets[d.id].discussionCount} comment${changesets[d.id].discussionCount !== 1 ? "s" : ""}`);
+                            d3.select(this).append('svg')
+                                .classed('text-bubble-svg', true)
+                                .append('use')
+                                .attr('href', 'img/icons.svg#speech-bubble');
+                        }
+                    });
+                    rl.select('div.changeset').each(function (d) {
+                        d3.select(this).html(
+                            '<a href="https://openstreetmap.org/browse/changeset/' + d.id + '" target="_blank" class="comment" title="Go to OSM changeset page">' +
+                            (changesets[d.id].comment || '<span class="no-comment">&mdash;</span>') +
+                            '</a>'
+                        );
+                    });
                 });
-            trafficLight.append("span")
-                .attr('class', function (d) {
-                    const changesetNumber = d.id;
-                    const possibleVandalism = vandalismCheckResult[changesetNumber].possibleVandalism;
-                    return (possibleVandalism ? "red" : "gray");
-                });
-
-            //Text bubble span where symbol is inserted in case of comments for this changeset
-            rl.append('span')
-                .classed('text-bubble', true);
-
-            //User name
-            rl.append('a').text(function (d) {
-                return d.user;
-            })
-                .attr('title', 'Go to OSM user page')
-                .attr('target', '_blank')
-                .attr('href', function (d) {
-                    return '//openstreetmap.org/user/' + d.user;
-                });
-
-            //Timespan since changeset creation
-            rl.append('span')
-                .attr('title', function (d) {
-                    return moment(d.time).format('MMM Do YYYY, h:mm:ss a');
-                })
-                .attr('class', 'date').text(function (d) {
-                    return moment(d.time).fromNow();
-                });
-
-            //link to achavi (temporarily hidden. To be discussed, if needed or not)
-            // rl.append('span').text(' ');
-            // rl.append('a').attr('class', 'reveal').text('«achavi»')
-            //     .attr('target', '_blank')
-            //     .attr('title', 'Get details about this changeset on Achavi')
-            //     .attr('href', function (d) {
-            //         return 'https://overpass-api.de/achavi/?changeset=' + d.id;
-            //     });
-
-            //Changeset information
-            rl.append('div').attr('class', 'changeset');
-            var queue = d3.queue();
-            var changesetIds = rl.data()
-                .map(function (d) { return d.id })
-                .filter(function (changesetId) { return changesetId !== ''; });
-            while (changesetIds.length > 0) {
-                queue.defer(d3.xml, 'https://www.openstreetmap.org/api/0.6/changesets?changesets=' + changesetIds.splice(0, 100).join(','));
             }
-            queue.awaitAll(function (error, xmls) {
-                if (error) return console.error(error);
-
-                var changesets = {};
-                xmls.forEach(function (xml) {
-                    var css = xml.getElementsByTagName('changeset');
-                    for (var i = 0; i < css.length; i++) {
-                        var cid = css[i].getAttribute('id');
-                        changesets[cid] = {
-                            discussionCount: +css[i].getAttribute("comments_count")
-                        };
-                        var tag = css[i].querySelector('tag[k="comment"]');
-                        if (tag)
-                            changesets[cid].comment = tag.getAttribute('v');
-                    }
-                });
-                rl.select('span.text-bubble').each(function (d) {
-                    if (changesets[d.id].discussionCount > 0) {
-                        // d3.select(this).html('&#128489; ');//Speech bubble glyphicon (doesn't work on Android, thus changed to SVG)
-                        d3.select(this).attr('title', `Changeset has ${changesets[d.id].discussionCount} comment${changesets[d.id].discussionCount !== 1 ? "s" : ""}`);
-                        d3.select(this).append('svg')
-                            .classed('text-bubble-svg', true)
-                            .append('use')
-                            .attr('href', 'img/icons.svg#speech-bubble');
-                    }
-                });
-                rl.select('div.changeset').each(function (d) {
-                    d3.select(this).html(
-                        '<a href="https://openstreetmap.org/browse/changeset/' + d.id + '" target="_blank" class="comment" title="Go to OSM changeset page">' +
-                        (changesets[d.id].comment || '<span class="no-comment">&mdash;</span>') +
-                        '</a>'
-                    );
-                });
-            });
         }).get();
 }
 
