@@ -794,28 +794,31 @@ Sum of all added/deleted tags: ${deltaInTags}. ${deltaInTags < deletedElementsLi
                         }
                     });
 
-                    let uniqueEditors = [...new Set(editors)];
-                    uniqueEditors = uniqueEditors.sort();
-                    uniqueEditors.unshift("<All>");
+                    // this is not working - probably due to a different context (updateDivs calling itself)
+                    // but the problem here is that we get the changeset details rather late
+                    
+                    // let uniqueEditors = [...new Set(editors)];
+                    // uniqueEditors = uniqueEditors.sort();
+                    // uniqueEditors.unshift("<All>");
         
-                    let editorsDropdown = d3.select("#editors").on('change', function () {
-                        let selectedEditor = d3.select("#editors").selectAll("option")[0][this.selectedIndex].value;
-                        bytime = [];
-                        for (var k in changesets) {
-                            if (selectedEditor == "<All>" || changesets[k].created_by == selectedEditor)
-                                bytime.push(changesets[k]);
-                        }
-                        updateDivs();
-                    });
-                    var options = editorsDropdown.selectAll("option")
-                        .data(uniqueEditors)
-                        .enter()
-                        .append("option");
-                    options.text(function(d) {
-                        return d;
-                    }).attr("value", function(d) {
-                        return d;
-                    });
+                    // let editorsDropdown = d3.select("#editors").on('change', function () {
+                    //     let selectedEditor = d3.select("#editors").selectAll("option")[0][this.selectedIndex].value;
+                    //     bytime = [];
+                    //     for (var k in changesets) {
+                    //         if (selectedEditor == "<All>" || changesets[k].created_by == selectedEditor)
+                    //             bytime.push(changesets[k]);
+                    //     }
+                    //     updateDivs();
+                    // });
+                    // var options = editorsDropdown.selectAll("option")
+                    //     .data(uniqueEditors)
+                    //     .enter()
+                    //     .append("option");
+                    // options.text(function(d) {
+                    //     return d;
+                    // }).attr("value", function(d) {
+                    //     return d;
+                    // });
                             
                     rl.select('span.text-bubble').each(function (d) {
                         if (changesets[d.id].discussionCount > 0) {
