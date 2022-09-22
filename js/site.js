@@ -615,10 +615,32 @@ function run() {
                 return (+b.time) - (+a.time);
             });
 
+            var results = d3.select('#results');
+
+            //Highlight clicked layer on map and in sidebar
+            function click(d) {
+                results
+                    .selectAll('div.result')
+                    .classed('active', function (_) {
+                        return _.id == (d.id || d.feature.feature.properties.meta.changeset);
+                    });
+                layer.eachLayer(function (l) {
+                    layer.resetStyle(l);
+                })
+                var id = d.id ? d.id : d.feature.feature.properties.meta.changeset;
+                layer.eachLayer(function (l) {
+                    if (l.feature.properties.meta.changeset == id) {
+                        l.setStyle({ color: '#008dff' });
+                    }
+                });
+
+                //Make sure that sidebar is displayed
+                sidebar.classList.remove("hide");
+            }
+
             updateDivs();
 
             function updateDivs() {
-                var results = d3.select('#results');
                 var allresults = results
                     .selectAll('div.result')
                     .data(bytime, function (d) {
@@ -638,27 +660,6 @@ function run() {
                         return colint(datescale(l.time));
                     });
                 allresults.order();
-
-                //Highlight clicked layer on map and in sidebar
-                function click(d) {
-                    results
-                        .selectAll('div.result')
-                        .classed('active', function (_) {
-                            return _.id == (d.id || d.feature.feature.properties.meta.changeset);
-                        });
-                    layer.eachLayer(function (l) {
-                        layer.resetStyle(l);
-                    })
-                    var id = d.id ? d.id : d.feature.feature.properties.meta.changeset;
-                    layer.eachLayer(function (l) {
-                        if (l.feature.properties.meta.changeset == id) {
-                            l.setStyle({ color: '#008dff' });
-                        }
-                    });
-
-                    //Make sure that sidebar is displayed
-                    sidebar.classList.remove("hide");
-                }
 
                 rl.on('click', click);//Highlight changeset on click (desktop/mobile)
                 rl.on('mouseover', click);//Highlight changeset on mouseover (desktop)
