@@ -301,9 +301,11 @@ function run() {
 
             var bytime = [];
             var changesets = {};
+            let allFeatures = [];
 
             layer.eachLayer(function (l) {
                 if (!l.feature.properties.meta.changeset) return;
+                allFeatures.push(l); 
                 changesets[l.feature.properties.meta.changeset] = changesets[l.feature.properties.meta.changeset] || {
                     id: l.feature.properties.meta.changeset,
                     time: new Date(l.feature.properties.meta.timestamp),
@@ -320,6 +322,9 @@ function run() {
             uniqueUsers.unshift("<All>");
 
             let usersDropdown = d3.select("#users").on('change', function () {
+                layer.eachLayer(function (l) {
+                    map.removeLayer(l);
+                });
                 let selectedUser = d3.select("#users").selectAll("option")[0][this.selectedIndex].value;
                 bytime = [];
                 for (var k in changesets) {
@@ -327,6 +332,11 @@ function run() {
                         bytime.push(changesets[k]);
                 }
                 updateDivs();
+                allFeatures.forEach(function (l) {
+                    if (selectedUser == "<All>" || l.feature.properties.meta.user == selectedUser) {
+                        map.addLayer(l);
+                    }
+                });
             });
             var options = usersDropdown.selectAll("option")
                 .data(uniqueUsers)
